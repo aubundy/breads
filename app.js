@@ -5,6 +5,7 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 // import { crawlTiles } from "./openstreetmap/service.js";
+import { findNearby } from "./utils/distance.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -45,7 +46,27 @@ app.get("/restaurants", (req, res) => {
       restaurants.push(JSON.parse(leftover));
     }
 
-    res.json(restaurants);
+    const test = findNearby(
+      restaurants,
+      // 33.5207, // Birmingham lat
+      33.4093, // Hoover lat
+      // -86.8025, // Birmingham lng
+      -86.8321, // Hoover lng
+      2, // radius miles
+      50, // limit
+    );
+
+    console.log(`Found ${test.length} nearby restaurants`);
+
+    const amenityCounts = test.reduce((counts, place) => {
+      const amenity = place.amenity || "unknown";
+      counts[amenity] = (counts[amenity] || 0) + 1;
+      return counts;
+    }, {});
+
+    console.log("Amenity counts:", amenityCounts);
+
+    res.json(test);
   });
 
   readStream.on("error", (err) => {
