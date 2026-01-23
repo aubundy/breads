@@ -8,8 +8,7 @@ dist/
 
 # Environment variables
 .env
-.env.development
-.env.production
+.env.*
 
 # Logs and cache
 logs
