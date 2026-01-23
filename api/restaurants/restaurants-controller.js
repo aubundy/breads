@@ -19,9 +19,11 @@ export async function handleGetRestaurants(req, res, next) {
 
     const page = parseInt(req.query.page) || 0;
     const size = parseInt(req.query.size) || 25;
-    const lat = req.query.lat || 33.4093;
-    const lng = req.query.lng || -86.8321;
-    const filters = req.query.filterAmenities.split(",");
+    const lat = parseFloat(req.query.lat) || 33.4093;
+    const lng = parseFloat(req.query.lng) || -86.8321;
+
+    const amenities = req.query.filterAmenities || "";
+    const filters = amenities.split(",");
 
     const restaurants = await service.getRestaurants({
       page,
