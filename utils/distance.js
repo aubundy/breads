@@ -3,15 +3,20 @@ export function findNearby(
   userLat,
   userLng,
   radiusMiles = 5,
-  limit = 25,
+  page,
+  size,
 ) {
   const bbox = getBoundingBox(userLat, userLng, radiusMiles);
-  const p2 = points.filter((point) => point.amenity !== "fast_food");
+  const p2 = points.filter((point) => point.name !== null);
   const candidates = getCandidates(p2, bbox, userLat, userLng, radiusMiles);
+
+  const fromIndex = page * size;
+  const limit = fromIndex + size;
+  console.log(`Returning results from index ${fromIndex} to ${limit}`);
 
   return candidates
     .sort((a, b) => a.distanceMiles - b.distanceMiles)
-    .slice(0, limit);
+    .slice(fromIndex, limit);
 }
 
 function getBoundingBox(userLat, userLng, radiusMiles = 5) {
@@ -43,9 +48,9 @@ function getCandidates(points, bbox, userLat, userLng, radiusMiles) {
       );
 
       if (distanceMiles <= radiusMiles) {
-        console.log(
-          `Distance to point ${point.lat},${point.lon}: ${distanceMiles} miles`,
-        );
+        // console.log(
+        //   `Distance to point ${point.lat},${point.lon}: ${distanceMiles} miles`,
+        // );
         let copy = point;
         copy.distanceMiles = distanceMiles; // move to helper fn
         candidates.push(copy);
