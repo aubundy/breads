@@ -7,7 +7,7 @@ import { findNearby } from "../utils/distance.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-function getRestaurants({ page, size, lat, lng, filters }) {
+function getRestaurants({ page, lat, lng, filters }) {
   return new Promise((resolve, reject) => {
     const outputPath = path.join(
       __dirname,
@@ -42,7 +42,6 @@ function getRestaurants({ page, size, lat, lng, filters }) {
         lng,
         250, // radius miles
         page,
-        size,
       );
 
       console.log(`Found ${restaraunts.length} nearby restaurants`);

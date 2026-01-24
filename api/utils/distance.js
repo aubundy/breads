@@ -1,17 +1,10 @@
-export function findNearby(
-  points,
-  userLat,
-  userLng,
-  radiusMiles = 5,
-  page,
-  size,
-) {
+export function findNearby(points, userLat, userLng, radiusMiles = 5, page) {
   const bbox = getBoundingBox(userLat, userLng, radiusMiles);
   const p2 = points.filter((point) => point.name !== null);
   const candidates = getCandidates(p2, bbox, userLat, userLng, radiusMiles);
 
-  const fromIndex = page * size;
-  const limit = fromIndex + size;
+  const fromIndex = page * 25;
+  const limit = fromIndex + 25;
   console.log(`Returning results from index ${fromIndex} to ${limit}`);
 
   return candidates
