@@ -12,10 +12,12 @@ const options = [
 ];
 
 export function FilterCard({
+  hasChange,
   selectedFilters,
   handleFilterSelection,
   handleApplyFilters,
 }: {
+  hasChange: boolean;
   selectedFilters: string[];
   handleFilterSelection: (filters: string[]) => void;
   handleApplyFilters: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -30,6 +32,7 @@ export function FilterCard({
       />
       <Space h="lg" />
       <Button
+        disabled={!hasChange}
         size="lg"
         radius="lg"
         variant="light"

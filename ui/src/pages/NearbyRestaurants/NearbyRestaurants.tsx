@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Paper, Button, Text, Flex, Space } from "@mantine/core";
-import { IconAdjustments } from "@tabler/icons-react";
+import { Paper, Button, Flex, Space, Box, Text } from "@mantine/core";
+import { IconAdjustments, IconAlertSquareRounded } from "@tabler/icons-react";
 
 import { AppliedFiltersList } from "./components/AppliedFiltersList";
 import { FilterCard } from "./components/FilterCard";
@@ -25,7 +25,12 @@ export function NearbyRestaurants() {
     const fetchRestaurants = async (page: number, appliedFilters: string[]) => {
       try {
         const restaurants = await getRestaurants(page, appliedFilters);
-        setRestaurants((prev) => [...prev, ...restaurants]);
+
+        if (page === 0) {
+          setRestaurants(restaurants);
+        } else {
+          setRestaurants((prev) => [...prev, ...restaurants]);
+        }
       } catch (error) {
         console.error("Error fetching restaurants:", error);
       }
@@ -46,7 +51,6 @@ export function NearbyRestaurants() {
   function handleApplyFilters(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setPage(0);
-    setRestaurants([]);
     setAppliedFilters(selectedFilters);
     setShowFilterCard(false);
   }
@@ -54,7 +58,6 @@ export function NearbyRestaurants() {
   function onRemoveFilter(filter: string) {
     return () => {
       setPage(0);
-      setRestaurants([]);
       setSelectedFilters((prev) => prev.filter((f) => f !== filter));
       setAppliedFilters((prev) => prev.filter((f) => f !== filter));
     };
@@ -81,10 +84,13 @@ export function NearbyRestaurants() {
           >
             {showFilterCard ? "Hide filters" : "Show filters"}
           </Button>
-          <Text size="lg">Viewing {restaurants.length} restaurants</Text>
+          <Text size="lg">Viewing {rows.length} restaurants</Text>
         </Flex>
         {showFilterCard ? (
           <FilterCard
+            hasChange={
+              JSON.stringify(selectedFilters) !== JSON.stringify(appliedFilters)
+            }
             selectedFilters={selectedFilters}
             handleFilterSelection={handleFilterSelection}
             handleApplyFilters={handleApplyFilters}
@@ -97,17 +103,28 @@ export function NearbyRestaurants() {
         )}
       </Paper>
       <Paper shadow="md" radius="xl" withBorder p="xl">
-        <Table headers={headers} rows={rows} />
-        <Space h="md" />
-        <Button
-          size="lg"
-          radius="lg"
-          variant="white"
-          fullWidth
-          onClick={() => setPage((prev) => prev + 1)}
-        >
-          Load more
-        </Button>
+        {rows.length > 0 ? (
+          <>
+            <Table headers={headers} rows={rows} />
+            <Space h="md" />
+            <Button
+              size="lg"
+              radius="lg"
+              variant="white"
+              fullWidth
+              onClick={() => setPage((prev) => prev + 1)}
+            >
+              Load more
+            </Button>
+          </>
+        ) : (
+          <Box w={722}>
+            <Flex direction="column" align="center" justify="center" py="xl">
+              <IconAlertSquareRounded size={48} style={{ margin: "0 auto" }} />
+              <Text size="lg">No restaurants found</Text>
+            </Flex>
+          </Box>
+        )}
       </Paper>
     </>
   );
