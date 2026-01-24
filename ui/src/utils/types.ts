@@ -3,6 +3,6 @@ export interface Restaurant {
   name: string;
   amenity: string;
   cuisine: string;
-  distance_miles: number | null;
+  distanceMiles: number | null;
   [key: string]: unknown;
 }

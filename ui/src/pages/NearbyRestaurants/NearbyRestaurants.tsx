@@ -65,7 +65,7 @@ export function NearbyRestaurants() {
     { data: r.name, width: 260 },
     { data: r.amenity, width: 90 },
     { data: formatCuisines(r.cuisine), width: 175 },
-    { data: formatDistance(r.distance_miles), width: 115 },
+    { data: formatDistance(r.distanceMiles), width: 115 },
   ]);
 
   return (
