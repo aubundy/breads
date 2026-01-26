@@ -8,11 +8,16 @@ import { Table } from "../../components/Table";
 
 import { getRestaurants } from "../../services/restaurantsService";
 
-import { formatCuisines, formatDistance } from "../../utils/formatters";
+import { formatDistance } from "../../utils/formatters";
 
 import type { Restaurant } from "../../utils/types";
 
-const headers = ["Restaurant Name", "Amenity", "Cuisine", "Distance (mi)"];
+const headers = [
+  { key: 1, name: "Restaurant Name" },
+  // {key: 2, name: "Amenity"},
+  // {key: 3, name: "Cuisine"},
+  { key: 4, name: "Mi", width: 70 },
+];
 
 export function NearbyRestaurants() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -64,11 +69,11 @@ export function NearbyRestaurants() {
   }
 
   const rows = restaurants.map((r) => [
-    { data: r.id },
-    { data: r.name, width: 260 },
-    { data: r.amenity, width: 90 },
-    { data: formatCuisines(r.cuisine), width: 175 },
-    { data: formatDistance(r.distanceMiles), width: 115 },
+    r.id,
+    r.name,
+    // r.amenity,
+    // formatCuisines(r.cuisine),
+    formatDistance(r.distanceMiles),
   ]);
 
   return (
@@ -102,7 +107,7 @@ export function NearbyRestaurants() {
           />
         )}
       </Paper>
-      <Paper shadow="md" radius="xl" withBorder p="xl">
+      <Paper shadow="md" radius="xl" withBorder p="xs">
         {rows.length > 0 ? (
           <>
             <Table headers={headers} rows={rows} />

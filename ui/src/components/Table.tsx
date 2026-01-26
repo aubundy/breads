@@ -1,8 +1,10 @@
-import { Box, Text, Table as MantineTable } from "@mantine/core";
+import { Flex, Text, Table as MantineTable } from "@mantine/core";
 
-export function Table({ headers, rows }: { headers: string[]; rows: any[] }) {
+type Headers = { key: number; name: string; width?: number }[];
+
+export function Table({ headers, rows }: { headers: Headers; rows: any[] }) {
   return (
-    <MantineTable highlightOnHover>
+    <MantineTable highlightOnHover layout="fixed">
       <MantineTable.Thead>
         <MantineTable.Tr>
           <TableHeaders headers={headers} />
@@ -15,8 +17,12 @@ export function Table({ headers, rows }: { headers: string[]; rows: any[] }) {
   );
 }
 
-function TableHeaders({ headers }: { headers: string[] }) {
-  return headers.map((header) => <MantineTable.Th>{header}</MantineTable.Th>);
+function TableHeaders({ headers }: { headers: Headers }) {
+  return headers.map((header) => (
+    <MantineTable.Th key={header.key} style={{ width: header.width }}>
+      {header.name}
+    </MantineTable.Th>
+  ));
 }
 
 function TableRows({ rows }: { rows: any[] }) {
@@ -31,12 +37,14 @@ function TableRows({ rows }: { rows: any[] }) {
   });
 }
 
-function TableCells({ cells }: { cells: { width: number; data: any }[] }) {
-  return cells.map(({ width, data }) => (
+function TableCells({ cells }: { cells: string[] }) {
+  return cells.map((data) => (
     <MantineTable.Td>
-      <Box w={width}>
-        <Text truncate="end">{data}</Text>
-      </Box>
+      <Flex style={{ width: "100%" }}>
+        <Text style={{ flex: 1, minWidth: 0 }} truncate="end">
+          {data}
+        </Text>
+      </Flex>
     </MantineTable.Td>
   ));
 }
