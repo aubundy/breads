@@ -8,18 +8,44 @@ import { Table } from "../../components/Table";
 
 import { getRestaurants } from "../../services/restaurantsService";
 
-import { formatDistance } from "../../utils/formatters";
+import { formatCuisines, formatDistance } from "../../utils/formatters";
+import { useBreakpoints } from "../../utils/hooks";
 
 import type { Restaurant } from "../../utils/types";
 
-const headers = [
-  { key: 1, name: "Restaurant Name" },
-  // {key: 2, name: "Amenity"},
-  // {key: 3, name: "Cuisine"},
-  { key: 4, name: "Mi", width: 70 },
+const columns = [
+  {
+    key: 1,
+    header: "Restaurant name",
+    views: ["mobile", "tablet", "desktop"],
+    value: (r: Restaurant) => r.name,
+  },
+  {
+    key: 2,
+    header: "Amenity",
+    views: ["tablet", "desktop"],
+    value: (r: Restaurant) => r.amenity,
+    width: 200,
+  },
+  {
+    key: 3,
+    header: "Cuisine",
+    views: ["desktop"],
+    value: (r: Restaurant) => formatCuisines(r.cuisine),
+    width: 250,
+  },
+  {
+    key: 4,
+    header: "Mi",
+    views: ["mobile", "tablet", "desktop"],
+    value: (r: Restaurant) => formatDistance(r.distanceMiles),
+    width: 70,
+  },
 ];
 
 export function NearbyRestaurants() {
+  const view = useBreakpoints();
+
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [page, setPage] = useState(0);
   const [showFilterCard, setShowFilterCard] = useState(false);
@@ -68,13 +94,13 @@ export function NearbyRestaurants() {
     };
   }
 
-  const rows = restaurants.map((r) => [
-    r.id,
-    r.name,
-    // r.amenity,
-    // formatCuisines(r.cuisine),
-    formatDistance(r.distanceMiles),
-  ]);
+  const activeColumns = columns.filter((col) => col.views.includes(view));
+  const rows = restaurants.map((r) => activeColumns.map((col) => col.value(r)));
+  const headers = activeColumns.map((col) => ({
+    key: col.key,
+    name: col.header,
+    width: col.width,
+  }));
 
   return (
     <>
