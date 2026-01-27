@@ -1,4 +1,5 @@
-import { Paper, MultiSelect, Button, Space } from "@mantine/core";
+import { Paper, MultiSelect, Button, Space, Switch } from "@mantine/core";
+import type { Filters } from "../../../utils/types";
 
 const options = [
   { value: "restaurant", label: "Restaurant" },
@@ -11,24 +12,33 @@ const options = [
   { value: "fast_food", label: "Fast Food" },
 ];
 
-export function FilterCard({
+export function SelectFiltersCard({
   hasChange,
   selectedFilters,
-  handleFilterSelection,
+  handleFastFoodToggle,
+  handleCuisineFilters,
   handleApplyFilters,
 }: {
   hasChange: boolean;
-  selectedFilters: string[];
-  handleFilterSelection: (filters: string[]) => void;
+  selectedFilters: Filters;
+  handleFastFoodToggle: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleCuisineFilters: (filters: string[]) => void;
   handleApplyFilters: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
   return (
     <Paper shadow="md" radius="xl" withBorder p="xl" mb="xl" mt="xl">
+      <Switch
+        checked={!selectedFilters.fastFood}
+        label="Show Fast Food options"
+        size="md"
+        radius="lg"
+        onChange={handleFastFoodToggle}
+      />
       <MultiSelect
         label="Filter out options"
         data={options}
-        defaultValue={selectedFilters}
-        onChange={handleFilterSelection}
+        defaultValue={selectedFilters.cuisine}
+        onChange={handleCuisineFilters}
       />
       <Space h="lg" />
       <Button

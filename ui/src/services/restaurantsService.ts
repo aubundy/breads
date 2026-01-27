@@ -1,14 +1,16 @@
-import type { Restaurant } from "../utils/types";
+import type { Filters, Restaurant } from "../utils/types";
 
 export async function getRestaurants(
   page: number,
-  appliedFilters: string[],
+  appliedFilters: Filters,
 ): Promise<Restaurant[]> {
   try {
-    const filterQuery = "&filterAmenities=" + appliedFilters.join(",");
+    const { cuisine, fastFood } = appliedFilters;
+    const cuisineQuery = "&filterCuisines=" + cuisine.join(",");
+    const fastFoodQuery = fastFood ? "" : "&excludeFastFood=true";
 
     const response = await fetch(
-      `/api/restaurants?lat=33.4093&lng=-86.8321&page=${page}${filterQuery}`,
+      `/api/restaurants?lat=33.4093&lng=-86.8321&page=${page}${cuisineQuery}${fastFoodQuery}`,
     );
 
     const data = await response.json();

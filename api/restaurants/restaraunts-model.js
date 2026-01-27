@@ -7,7 +7,7 @@ import { findNearby } from "../utils/distance.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-function getRestaurants({ page, lat, lng, filters }) {
+function getRestaurants({ page, lat, lng, filters, excludeFastFood }) {
   return new Promise((resolve, reject) => {
     const outputPath = path.join(
       __dirname,
@@ -36,8 +36,12 @@ function getRestaurants({ page, lat, lng, filters }) {
         points.push(JSON.parse(leftover));
       }
 
+      const matchesCuisineType = ({ cuisine }) => !filters.includes(cuisine);
+      const isNotFastFood = ({ amenity }) =>
+        excludeFastFood ? amenity !== "fast_food" : true;
+
       const restaraunts = findNearby(
-        points.filter((point) => !filters.includes(point.amenity)),
+        points.filter(matchesCuisineType).filter(isNotFastFood),
         lat,
         lng,
         250, // radius miles

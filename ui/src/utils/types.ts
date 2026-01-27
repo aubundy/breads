@@ -6,3 +6,8 @@ export interface Restaurant {
   distanceMiles: number | null;
   [key: string]: unknown;
 }
+
+export interface Filters {
+  fastFood: boolean;
+  cuisine: string[];
+}

@@ -3,7 +3,7 @@ import { Paper, Button, Flex, Space, Box, Text, Badge } from "@mantine/core";
 import { IconAdjustments, IconAlertSquareRounded } from "@tabler/icons-react";
 
 import { AppliedFiltersList } from "./components/AppliedFiltersList";
-import { FilterCard } from "./components/FilterCard";
+import { SelectFiltersCard } from "./components/SelectFiltersCard";
 import { ResponsiveRow } from "../../components/ResponsiveRow";
 import { Table } from "../../components/Table";
 
@@ -12,7 +12,7 @@ import { getRestaurants } from "../../services/restaurantsService";
 import { formatCuisines, formatDistance } from "../../utils/formatters";
 import { useBreakpoints } from "../../utils/hooks";
 
-import type { Restaurant } from "../../utils/types";
+import type { Filters, Restaurant } from "../../utils/types";
 
 const columns = [
   {
@@ -44,17 +44,24 @@ const columns = [
   },
 ];
 
+const initialFiltersState: Filters = { fastFood: true, cuisine: [] };
+
 export function NearbyRestaurants() {
   const view = useBreakpoints();
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [page, setPage] = useState(0);
-  const [showFilterCard, setShowFilterCard] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [appliedFilters, setAppliedFilters] = useState<string[]>([]);
+  const [showSelectFiltersCard, setShowSelectFiltersCard] = useState(false);
+  const [selectedFilters, setSelectedFilters] =
+    useState<Filters>(initialFiltersState);
+  const [appliedFilters, setAppliedFilters] =
+    useState<Filters>(initialFiltersState);
 
   useEffect(() => {
-    const fetchRestaurants = async (page: number, appliedFilters: string[]) => {
+    const fetchRestaurants = async (
+      page: number,
+      appliedFilters: { fastFood: boolean; cuisine: string[] },
+    ) => {
       try {
         const restaurants = await getRestaurants(page, appliedFilters);
 
@@ -73,25 +80,36 @@ export function NearbyRestaurants() {
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    setShowFilterCard((prev) => !prev);
+    setShowSelectFiltersCard((prev) => !prev);
   }
 
-  function handleFilterSelection(selected: string[]) {
-    setSelectedFilters(selected);
+  function handleFastFoodToggle(e: React.ChangeEvent<HTMLInputElement>) {
+    const isChecked = e.currentTarget.checked;
+    setSelectedFilters((prev) => ({ ...prev, fastFood: !isChecked }));
+  }
+
+  function handleCuisineFilters(selected: string[]) {
+    setSelectedFilters((prev) => ({ ...prev, cuisine: selected }));
   }
 
   function handleApplyFilters(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setPage(0);
     setAppliedFilters(selectedFilters);
-    setShowFilterCard(false);
+    setShowSelectFiltersCard(false);
   }
 
   function onRemoveFilter(filter: string) {
     return () => {
       setPage(0);
-      setSelectedFilters((prev) => prev.filter((f) => f !== filter));
-      setAppliedFilters((prev) => prev.filter((f) => f !== filter));
+      setSelectedFilters((prev) => ({
+        ...prev,
+        cuisine: prev.cuisine.filter((f) => f !== filter),
+      }));
+      setAppliedFilters((prev) => ({
+        ...prev,
+        cuisine: prev.cuisine.filter((f) => f !== filter),
+      }));
     };
   }
 
@@ -102,6 +120,9 @@ export function NearbyRestaurants() {
     name: col.header,
     width: col.width,
   }));
+
+  const hasChange =
+    JSON.stringify(selectedFilters) !== JSON.stringify(appliedFilters);
 
   return (
     <>
@@ -114,19 +135,18 @@ export function NearbyRestaurants() {
             variant="light"
             onClick={handleButtonClick}
           >
-            {showFilterCard ? "Hide filters" : "Show filters"}
+            {showSelectFiltersCard ? "Hide filters" : "Show filters"}
           </Button>
           <Badge variant="transparent" color="blue" size="xl" radius="md">
             {rows.length || "-"} shown · ≤10 mi
           </Badge>
         </ResponsiveRow>
-        {showFilterCard ? (
-          <FilterCard
-            hasChange={
-              JSON.stringify(selectedFilters) !== JSON.stringify(appliedFilters)
-            }
+        {showSelectFiltersCard ? (
+          <SelectFiltersCard
+            hasChange={hasChange}
             selectedFilters={selectedFilters}
-            handleFilterSelection={handleFilterSelection}
+            handleFastFoodToggle={handleFastFoodToggle}
+            handleCuisineFilters={handleCuisineFilters}
             handleApplyFilters={handleApplyFilters}
           />
         ) : (

@@ -1,19 +1,23 @@
 import { PillGroup, Pill, Space } from "@mantine/core";
+import type { Filters } from "../../../utils/types";
 
 export function AppliedFiltersList({
   appliedFilters,
   onRemoveFilter,
 }: {
-  appliedFilters: string[];
+  appliedFilters: Filters;
   onRemoveFilter: (value: string) => () => void;
 }) {
+  const { cuisine, fastFood } = appliedFilters;
+  const displayedFilters: string[] = [!fastFood ? "Fast Food" : "", ...cuisine];
+
   return (
     <>
-      {appliedFilters.length > 0 && (
+      {displayedFilters.length > 0 && (
         <>
           <Space h="lg" />
           <PillGroup>
-            {appliedFilters.map((filter) => (
+            {displayedFilters.map((filter) => (
               <Pill
                 style={{ backgroundColor: "var(--mantine-color-red-2)" }}
                 size="xl"

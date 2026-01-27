@@ -2,7 +2,7 @@ import service from "./restaurants-service.js";
 
 export async function handleGetRestaurants(req, res, next) {
   try {
-    console.log(req.query.filterAmenities);
+    console.log(req.query.filterCuisines);
     // const amenitites = {
     //   restaurant: 379,
     //   ice_cream: 14,
@@ -21,14 +21,16 @@ export async function handleGetRestaurants(req, res, next) {
     const lat = parseFloat(req.query.lat) || 33.4093;
     const lng = parseFloat(req.query.lng) || -86.8321;
 
-    const amenities = req.query.filterAmenities || "";
-    const filters = amenities.split(",");
+    const cuisines = req.query.filterCuisines || "";
+    const excludeFastFood = req.query.excludeFastFood === "true";
+    const filters = cuisines.split(",");
 
     const restaurants = await service.getRestaurants({
       page,
       lat,
       lng,
       filters,
+      excludeFastFood,
     });
 
     console.log(`Controller: Retrieved ${restaurants.length} restaurants`);
