@@ -24,6 +24,7 @@ export function SelectFiltersCard({
         radius="lg"
         onChange={handleFastFoodToggle}
       />
+      <Space h="md" />
       <MultiSelect
         label="Filter out options"
         data={Object.keys(UI_CUISINES)}

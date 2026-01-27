@@ -2,7 +2,7 @@ import { API_CUISINES } from "./constants";
 import type { APICuisine } from "./types";
 
 export function formatCuisines(cuisines: string) {
-  if (!cuisines) return "-";
+  if (!cuisines) return "";
 
   const cuisineList: APICuisine[] = cuisines.split(";") as APICuisine[];
   return cuisineList.map((c: APICuisine) => API_CUISINES[c]).join(", ");
