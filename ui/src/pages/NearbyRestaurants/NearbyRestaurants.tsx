@@ -12,9 +12,15 @@ import { getRestaurants } from "../../services/restaurantsService";
 import { formatCuisines, formatDistance } from "../../utils/formatters";
 import { useBreakpoints } from "../../utils/hooks";
 
-import type { Filters, Restaurant } from "../../utils/types";
+import type { UICuisine, Filters, Restaurant } from "../../utils/types";
 
 const columns = [
+  {
+    key: 0,
+    header: "ID",
+    views: ["mobile", "tablet", "desktop"],
+    value: (r: Restaurant) => r.id,
+  },
   {
     key: 1,
     header: "Restaurant name",
@@ -24,14 +30,14 @@ const columns = [
   {
     key: 2,
     header: "Amenity",
-    views: ["tablet", "desktop"],
+    views: ["desktop"],
     value: (r: Restaurant) => r.amenity,
     width: 200,
   },
   {
     key: 3,
     header: "Cuisine",
-    views: ["desktop"],
+    views: ["tablet", "desktop"],
     value: (r: Restaurant) => formatCuisines(r.cuisine),
     width: 250,
   },
@@ -44,7 +50,10 @@ const columns = [
   },
 ];
 
-const initialFiltersState: Filters = { fastFood: true, cuisine: [] };
+const initialFiltersState: Filters = {
+  fastFood: true,
+  cuisine: [] as UICuisine[],
+};
 
 export function NearbyRestaurants() {
   const view = useBreakpoints();
@@ -58,10 +67,7 @@ export function NearbyRestaurants() {
     useState<Filters>(initialFiltersState);
 
   useEffect(() => {
-    const fetchRestaurants = async (
-      page: number,
-      appliedFilters: { fastFood: boolean; cuisine: string[] },
-    ) => {
+    const fetchRestaurants = async (page: number, appliedFilters: Filters) => {
       try {
         const restaurants = await getRestaurants(page, appliedFilters);
 
@@ -85,11 +91,14 @@ export function NearbyRestaurants() {
 
   function handleFastFoodToggle(e: React.ChangeEvent<HTMLInputElement>) {
     const isChecked = e.currentTarget.checked;
-    setSelectedFilters((prev) => ({ ...prev, fastFood: !isChecked }));
+    setSelectedFilters((prev) => ({ ...prev, fastFood: isChecked }));
   }
 
   function handleCuisineFilters(selected: string[]) {
-    setSelectedFilters((prev) => ({ ...prev, cuisine: selected }));
+    setSelectedFilters((prev) => ({
+      ...prev,
+      cuisine: selected as UICuisine[],
+    }));
   }
 
   function handleApplyFilters(e: React.MouseEvent<HTMLButtonElement>) {
@@ -101,21 +110,20 @@ export function NearbyRestaurants() {
 
   function onRemoveFilter(filter: string) {
     return () => {
+      const newFilters = (prev: Filters) => ({
+        fastFood: filter === "Fast Food",
+        cuisine: prev.cuisine.filter((f) => f !== filter),
+      });
+
       setPage(0);
-      setSelectedFilters((prev) => ({
-        ...prev,
-        cuisine: prev.cuisine.filter((f) => f !== filter),
-      }));
-      setAppliedFilters((prev) => ({
-        ...prev,
-        cuisine: prev.cuisine.filter((f) => f !== filter),
-      }));
+      setSelectedFilters(newFilters);
+      setAppliedFilters(newFilters);
     };
   }
 
   const activeColumns = columns.filter((col) => col.views.includes(view));
   const rows = restaurants.map((r) => activeColumns.map((col) => col.value(r)));
-  const headers = activeColumns.map((col) => ({
+  const headers = activeColumns.slice(1).map((col) => ({
     key: col.key,
     name: col.header,
     width: col.width,

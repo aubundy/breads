@@ -27,9 +27,11 @@ function TableHeaders({ headers }: { headers: Headers }) {
 
 function TableRows({ rows }: { rows: string[][] }) {
   return rows.map((row) => {
+    const [id, ...cells] = row;
+
     return (
-      <MantineTable.Tr key={row[0]}>
-        <TableCells cells={row} />
+      <MantineTable.Tr key={id}>
+        <TableCells cells={cells} />
       </MantineTable.Tr>
     );
   });

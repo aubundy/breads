@@ -1,16 +1,6 @@
 import { Paper, MultiSelect, Button, Space, Switch } from "@mantine/core";
+import { UI_CUISINES } from "../../../utils/constants";
 import type { Filters } from "../../../utils/types";
-
-const options = [
-  { value: "restaurant", label: "Restaurant" },
-  { value: "ice_cream", label: "Ice Cream" },
-  { value: "cafe", label: "Cafe" },
-  { value: "bar", label: "Bar" },
-  { value: "pub", label: "Pub" },
-  { value: "public_building", label: "Public Building" },
-  { value: "food_court", label: "Food Court" },
-  { value: "fast_food", label: "Fast Food" },
-];
 
 export function SelectFiltersCard({
   hasChange,
@@ -28,7 +18,7 @@ export function SelectFiltersCard({
   return (
     <Paper shadow="md" radius="xl" withBorder p="xl" mb="xl" mt="xl">
       <Switch
-        checked={!selectedFilters.fastFood}
+        checked={selectedFilters.fastFood}
         label="Show Fast Food options"
         size="md"
         radius="lg"
@@ -36,7 +26,7 @@ export function SelectFiltersCard({
       />
       <MultiSelect
         label="Filter out options"
-        data={options}
+        data={Object.keys(UI_CUISINES)}
         defaultValue={selectedFilters.cuisine}
         onChange={handleCuisineFilters}
       />

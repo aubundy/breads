@@ -9,7 +9,8 @@ export function AppliedFiltersList({
   onRemoveFilter: (value: string) => () => void;
 }) {
   const { cuisine, fastFood } = appliedFilters;
-  const displayedFilters: string[] = [!fastFood ? "Fast Food" : "", ...cuisine];
+  const amenityFilters: string[] = fastFood ? [] : ["Fast Food"];
+  const displayedFilters: string[] = [...amenityFilters, ...cuisine];
 
   return (
     <>

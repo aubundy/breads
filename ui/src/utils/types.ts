@@ -1,3 +1,5 @@
+import type { API_CUISINES, UI_CUISINES } from "./constants";
+
 export interface Restaurant {
   id: string;
   name: string;
@@ -9,5 +11,8 @@ export interface Restaurant {
 
 export interface Filters {
   fastFood: boolean;
-  cuisine: string[];
+  cuisine: UICuisine[];
 }
+
+export type UICuisine = keyof typeof UI_CUISINES;
+export type APICuisine = keyof typeof API_CUISINES;
