@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Paper, Button, Flex, Space, Box, Text } from "@mantine/core";
+import { Paper, Button, Flex, Space, Box, Text, Badge } from "@mantine/core";
 import { IconAdjustments, IconAlertSquareRounded } from "@tabler/icons-react";
 
 import { AppliedFiltersList } from "./components/AppliedFiltersList";
 import { FilterCard } from "./components/FilterCard";
+import { ResponsiveRow } from "../../components/ResponsiveRow";
 import { Table } from "../../components/Table";
 
 import { getRestaurants } from "../../services/restaurantsService";
@@ -105,7 +106,7 @@ export function NearbyRestaurants() {
   return (
     <>
       <Paper radius="xl" mb="xl">
-        <Flex direction="row" justify="space-between" align="center">
+        <ResponsiveRow>
           <Button
             size="lg"
             radius="lg"
@@ -115,8 +116,10 @@ export function NearbyRestaurants() {
           >
             {showFilterCard ? "Hide filters" : "Show filters"}
           </Button>
-          <Text size="lg">Viewing {rows.length} restaurants</Text>
-        </Flex>
+          <Badge variant="transparent" color="blue" size="xl" radius="md">
+            {rows.length || "-"} shown · ≤10 mi
+          </Badge>
+        </ResponsiveRow>
         {showFilterCard ? (
           <FilterCard
             hasChange={
