@@ -110,7 +110,7 @@ export const API_CUISINES = {
   steak: "Steak",
   sushi: "Sushi",
   tamales: "Tamales",
-  tex_mex: "Tex-Mex",
+  "tex-mex": "Tex-Mex",
   thai: "Thai",
   unknown: "Unknown",
   wings: "Wings",
