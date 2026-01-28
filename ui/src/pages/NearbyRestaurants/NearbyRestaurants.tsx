@@ -60,6 +60,7 @@ export function NearbyRestaurants() {
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [page, setPage] = useState(0);
+  const [range, setRange] = useState(10);
   const [showSelectFiltersCard, setShowSelectFiltersCard] = useState(false);
   const [selectedFilters, setSelectedFilters] =
     useState<Filters>(initialFiltersState);
@@ -67,22 +68,23 @@ export function NearbyRestaurants() {
     useState<Filters>(initialFiltersState);
 
   useEffect(() => {
-    const fetchRestaurants = async (page: number, appliedFilters: Filters) => {
+    const fetchRestaurants = async (
+      page: number,
+      range: number,
+      appliedFilters: Filters,
+    ) => {
       try {
-        const restaurants = await getRestaurants(page, appliedFilters);
+        const results = await getRestaurants(page, range, appliedFilters);
 
-        if (page === 0) {
-          setRestaurants(restaurants);
-        } else {
-          setRestaurants((prev) => [...prev, ...restaurants]);
-        }
+        if (page === 0) setRestaurants(results);
+        else setRestaurants((prev) => [...prev, ...results]);
       } catch (error) {
         console.error("Error fetching restaurants:", error);
       }
     };
 
-    fetchRestaurants(page, appliedFilters);
-  }, [page, appliedFilters]);
+    fetchRestaurants(page, range, appliedFilters);
+  }, [page, range, appliedFilters]);
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -104,6 +106,7 @@ export function NearbyRestaurants() {
   function handleApplyFilters(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setPage(0);
+    setRange(10);
     setAppliedFilters(selectedFilters);
     setShowSelectFiltersCard(false);
   }
@@ -116,9 +119,15 @@ export function NearbyRestaurants() {
       });
 
       setPage(0);
+      setRange(10);
       setSelectedFilters(newFilters);
       setAppliedFilters(newFilters);
     };
+  }
+
+  function handleLoadMore() {
+    setPage((prev) => prev + 1);
+    if (restaurants.length % 25 !== 0) setRange((prev) => prev + 10);
   }
 
   const activeColumns = columns.filter((col) => col.views.includes(view));
@@ -146,7 +155,7 @@ export function NearbyRestaurants() {
             {showSelectFiltersCard ? "Hide filters" : "Show filters"}
           </Button>
           <Badge variant="transparent" color="blue" size="xl" radius="md">
-            {rows.length || "-"} shown · ≤10 mi
+            {rows.length || "-"} shown · ≤{range} mi
           </Badge>
         </ResponsiveRow>
         {showSelectFiltersCard ? (
@@ -174,7 +183,7 @@ export function NearbyRestaurants() {
               radius="lg"
               variant="white"
               fullWidth
-              onClick={() => setPage((prev) => prev + 1)}
+              onClick={handleLoadMore}
             >
               Load more
             </Button>

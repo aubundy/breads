@@ -18,6 +18,7 @@ export async function handleGetRestaurants(req, res, next) {
     // -86.8025, // Birmingham lng
 
     const page = parseInt(req.query.page) || 0;
+    const range = parseInt(req.query.range) || 10;
     const lat = parseFloat(req.query.lat) || 33.4093;
     const lng = parseFloat(req.query.lng) || -86.8321;
 
@@ -27,6 +28,7 @@ export async function handleGetRestaurants(req, res, next) {
 
     const restaurants = await service.getRestaurants({
       page,
+      range,
       lat,
       lng,
       filters,
