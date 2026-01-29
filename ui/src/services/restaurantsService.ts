@@ -2,6 +2,8 @@ import { UI_CUISINES } from "../utils/constants";
 import type { Filters, Restaurant } from "../utils/types";
 
 export async function getRestaurants(
+  lat: number,
+  lng: number,
   page: number,
   range: number,
   appliedFilters: Filters,
@@ -12,7 +14,7 @@ export async function getRestaurants(
     const fastFoodQuery = `&excludeFastFood=${!fastFood}`;
 
     const response = await fetch(
-      `/api/restaurants?lat=33.4093&lng=-86.8321&page=${page}&range=${range}${cuisineQuery}${fastFoodQuery}`,
+      `/api/restaurants?lat=${lat}&lng=${lng}&page=${page}&range=${range}${cuisineQuery}${fastFoodQuery}`,
     );
 
     const data = await response.json();

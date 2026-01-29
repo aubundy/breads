@@ -7,6 +7,7 @@ import { SelectFiltersCard } from "./components/SelectFiltersCard";
 import { ResponsiveRow } from "../../components/ResponsiveRow";
 import { Table } from "../../components/Table";
 
+import { getLocation } from "../../services/locationService";
 import { getRestaurants } from "../../services/restaurantsService";
 
 import { formatCuisines, formatDistance } from "../../utils/formatters";
@@ -56,6 +57,7 @@ const initialFiltersState: Filters = {
 };
 
 export function NearbyRestaurants() {
+  const { lat, lng, source } = getLocation();
   const view = useBreakpoints();
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -74,7 +76,13 @@ export function NearbyRestaurants() {
       appliedFilters: Filters,
     ) => {
       try {
-        const results = await getRestaurants(page, range, appliedFilters);
+        const results = await getRestaurants(
+          lat,
+          lng,
+          page,
+          range,
+          appliedFilters,
+        );
 
         if (page === 0) setRestaurants(results);
         else setRestaurants((prev) => [...prev, ...results]);
@@ -83,8 +91,8 @@ export function NearbyRestaurants() {
       }
     };
 
-    fetchRestaurants(page, range, appliedFilters);
-  }, [page, range, appliedFilters]);
+    source !== "none" && fetchRestaurants(page, range, appliedFilters);
+  }, [lat, lng, source, page, range, appliedFilters]);
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
