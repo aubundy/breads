@@ -16,3 +16,9 @@ export interface Filters {
 
 export type UICuisine = keyof typeof UI_CUISINES;
 export type APICuisine = keyof typeof API_CUISINES;
+
+export type UserLocation = {
+  lat: number;
+  lng: number;
+  source: "gps" | "zip" | "none";
+};

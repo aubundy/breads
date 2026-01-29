@@ -1,3 +1,4 @@
+import type { UserLocation } from "../utils/types";
 import { storage } from "./storageService";
 
 export function requestLocation(
@@ -12,6 +13,6 @@ export function requestLocation(
   );
 }
 
-export function getLocation() {
+export function getLocation(): UserLocation {
   return storage.get("userLocation", { lat: 0, lng: 0, source: "none" });
 }

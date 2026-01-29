@@ -7,11 +7,11 @@ import { SelectFiltersCard } from "./components/SelectFiltersCard";
 import { ResponsiveRow } from "../../components/ResponsiveRow";
 import { Table } from "../../components/Table";
 
-import { getLocation } from "../../services/locationService";
+import { requestLocation } from "../../services/locationService";
 import { getRestaurants } from "../../services/restaurantsService";
 
 import { formatCuisines, formatDistance } from "../../utils/formatters";
-import { useBreakpoints } from "../../utils/hooks";
+import { useBreakpoints, useUserLocation } from "../../utils/hooks";
 
 import type { UICuisine, Filters, Restaurant } from "../../utils/types";
 
@@ -57,7 +57,7 @@ const initialFiltersState: Filters = {
 };
 
 export function NearbyRestaurants() {
-  const { lat, lng, source } = getLocation();
+  const { location, handleLocationUpdate } = useUserLocation();
   const view = useBreakpoints();
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -77,8 +77,8 @@ export function NearbyRestaurants() {
     ) => {
       try {
         const results = await getRestaurants(
-          lat,
-          lng,
+          location.lat,
+          location.lng,
           page,
           range,
           appliedFilters,
@@ -91,8 +91,15 @@ export function NearbyRestaurants() {
       }
     };
 
-    source !== "none" && fetchRestaurants(page, range, appliedFilters);
-  }, [lat, lng, source, page, range, appliedFilters]);
+    location.source !== "none" && fetchRestaurants(page, range, appliedFilters);
+  }, [
+    location.lat,
+    location.lng,
+    location.source,
+    page,
+    range,
+    appliedFilters,
+  ]);
 
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -182,27 +189,63 @@ export function NearbyRestaurants() {
         )}
       </Paper>
       <Paper shadow="md" radius="xl" withBorder p="xs">
-        {rows.length > 0 ? (
-          <>
-            <Table headers={headers} rows={rows} />
-            <Space h="md" />
-            <Button
-              size="lg"
-              radius="lg"
-              variant="white"
-              fullWidth
-              onClick={handleLoadMore}
-            >
-              Load more
-            </Button>
-          </>
-        ) : (
-          <Box w={722}>
+        {location.source === "none" ? (
+          <Box w={"100%"}>
             <Flex direction="column" align="center" justify="center" py="xl">
               <IconAlertSquareRounded size={48} style={{ margin: "0 auto" }} />
-              <Text size="lg">No restaurants found</Text>
+              <Text size="lg">
+                Location access is required to view nearby restaurants
+              </Text>
+              <Button
+                onClick={() =>
+                  requestLocation(
+                    ({ coords }) =>
+                      handleLocationUpdate({
+                        lat: coords.latitude,
+                        lng: coords.longitude,
+                        source: "gps",
+                      }),
+                    console.log,
+                  )
+                }
+              >
+                Give Location
+              </Button>
             </Flex>
           </Box>
+        ) : (
+          <>
+            {rows.length > 0 ? (
+              <>
+                <Table headers={headers} rows={rows} />
+                <Space h="md" />
+                <Button
+                  size="lg"
+                  radius="lg"
+                  variant="white"
+                  fullWidth
+                  onClick={handleLoadMore}
+                >
+                  Load more
+                </Button>
+              </>
+            ) : (
+              <Box w={"100%"}>
+                <Flex
+                  direction="column"
+                  align="center"
+                  justify="center"
+                  py="xl"
+                >
+                  <IconAlertSquareRounded
+                    size={48}
+                    style={{ margin: "0 auto" }}
+                  />
+                  <Text size="lg">No restaurants found</Text>
+                </Flex>
+              </Box>
+            )}
+          </>
         )}
       </Paper>
     </>
