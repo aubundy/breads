@@ -22,3 +22,5 @@ export type UserLocation = {
   lng: number;
   source: "gps" | "zip" | "none";
 };
+
+export type Status = "idle" | "loading" | "error" | "no-location" | "empty";

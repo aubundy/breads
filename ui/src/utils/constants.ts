@@ -1,3 +1,42 @@
+import { formatCuisines, formatDistance } from "./formatters";
+import type { Restaurant } from "./types";
+
+export const TABLE_COLUMNS = [
+  {
+    key: 0,
+    header: "ID",
+    views: ["mobile", "tablet", "desktop"],
+    value: (r: Restaurant) => r.id,
+  },
+  {
+    key: 1,
+    header: "Restaurant name",
+    views: ["mobile", "tablet", "desktop"],
+    value: (r: Restaurant) => r.name,
+  },
+  {
+    key: 2,
+    header: "Amenity",
+    views: ["desktop"],
+    value: (r: Restaurant) => r.amenity,
+    width: 200,
+  },
+  {
+    key: 3,
+    header: "Cuisine",
+    views: ["tablet", "desktop"],
+    value: (r: Restaurant) => formatCuisines(r.cuisine),
+    width: 250,
+  },
+  {
+    key: 4,
+    header: "Mi",
+    views: ["mobile", "tablet", "desktop"],
+    value: (r: Restaurant) => formatDistance(r.distanceMiles),
+    width: 70,
+  },
+];
+
 export const UI_CUISINES = {
   American: "american",
   Asian: "asian",

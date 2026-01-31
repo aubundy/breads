@@ -1,73 +1,35 @@
 import { useEffect, useState } from "react";
-import { Paper, Button, Flex, Space, Box, Text, Badge } from "@mantine/core";
+import { Paper, Button, Flex, Box, Text, Badge, Space } from "@mantine/core";
 import { IconAdjustments, IconAlertSquareRounded } from "@tabler/icons-react";
 
-import { AppliedFiltersList } from "./components/AppliedFiltersList";
-import { SelectFiltersCard } from "./components/SelectFiltersCard";
+import { FiltersSection } from "./components/FiltersSection";
+import { RestaurantsSection } from "./components/RestaurantsSection";
 import { ResponsiveRow } from "../../components/ResponsiveRow";
-import { Table } from "../../components/Table";
 
 import { requestLocation } from "../../services/locationService";
 import { getRestaurants } from "../../services/restaurantsService";
 
-import { formatCuisines, formatDistance } from "../../utils/formatters";
+import { TABLE_COLUMNS } from "../../utils/constants";
 import { useBreakpoints, useUserLocation } from "../../utils/hooks";
 
-import type { UICuisine, Filters, Restaurant } from "../../utils/types";
+import type { UICuisine, Filters, Restaurant, Status } from "../../utils/types";
 
-const columns = [
-  {
-    key: 0,
-    header: "ID",
-    views: ["mobile", "tablet", "desktop"],
-    value: (r: Restaurant) => r.id,
-  },
-  {
-    key: 1,
-    header: "Restaurant name",
-    views: ["mobile", "tablet", "desktop"],
-    value: (r: Restaurant) => r.name,
-  },
-  {
-    key: 2,
-    header: "Amenity",
-    views: ["desktop"],
-    value: (r: Restaurant) => r.amenity,
-    width: 200,
-  },
-  {
-    key: 3,
-    header: "Cuisine",
-    views: ["tablet", "desktop"],
-    value: (r: Restaurant) => formatCuisines(r.cuisine),
-    width: 250,
-  },
-  {
-    key: 4,
-    header: "Mi",
-    views: ["mobile", "tablet", "desktop"],
-    value: (r: Restaurant) => formatDistance(r.distanceMiles),
-    width: 70,
-  },
-];
-
-const initialFiltersState: Filters = {
+const defaultFilters: Filters = {
   fastFood: true,
   cuisine: [] as UICuisine[],
 };
 
 export function NearbyRestaurants() {
-  const { location, handleLocationUpdate } = useUserLocation();
   const view = useBreakpoints();
+  const { location, handleLocationUpdate } = useUserLocation();
+  const defaultStatus = location.source === "none" ? "no-location" : "loading";
 
+  const [status, setStatus] = useState<Status>(defaultStatus);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [page, setPage] = useState(0);
   const [range, setRange] = useState(10);
   const [showSelectFiltersCard, setShowSelectFiltersCard] = useState(false);
-  const [selectedFilters, setSelectedFilters] =
-    useState<Filters>(initialFiltersState);
-  const [appliedFilters, setAppliedFilters] =
-    useState<Filters>(initialFiltersState);
+  const [appliedFilters, setAppliedFilters] = useState<Filters>(defaultFilters);
 
   useEffect(() => {
     const fetchRestaurants = async (
@@ -86,8 +48,12 @@ export function NearbyRestaurants() {
 
         if (page === 0) setRestaurants(results);
         else setRestaurants((prev) => [...prev, ...results]);
+
+        const noResults = results.length === 0 && page === 0;
+        setStatus(noResults ? "empty" : "idle");
       } catch (error) {
         console.error("Error fetching restaurants:", error);
+        setStatus("error");
       }
     };
 
@@ -101,43 +67,28 @@ export function NearbyRestaurants() {
     appliedFilters,
   ]);
 
-  function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
+  function handleShowFilters(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     setShowSelectFiltersCard((prev) => !prev);
   }
 
-  function handleFastFoodToggle(e: React.ChangeEvent<HTMLInputElement>) {
-    const isChecked = e.currentTarget.checked;
-    setSelectedFilters((prev) => ({ ...prev, fastFood: isChecked }));
-  }
-
-  function handleCuisineFilters(selected: string[]) {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      cuisine: selected as UICuisine[],
-    }));
-  }
-
-  function handleApplyFilters(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
+  function handleNewFilters(newFilters: Filters) {
     setPage(0);
     setRange(10);
-    setAppliedFilters(selectedFilters);
+    setAppliedFilters(newFilters);
     setShowSelectFiltersCard(false);
   }
 
-  function onRemoveFilter(filter: string) {
-    return () => {
-      const newFilters = (prev: Filters) => ({
-        fastFood: filter === "Fast Food",
-        cuisine: prev.cuisine.filter((f) => f !== filter),
-      });
-
-      setPage(0);
-      setRange(10);
-      setSelectedFilters(newFilters);
-      setAppliedFilters(newFilters);
-    };
+  function giveLocationAccess() {
+    requestLocation(
+      ({ coords }) =>
+        handleLocationUpdate({
+          lat: coords.latitude,
+          lng: coords.longitude,
+          source: "gps",
+        }),
+      console.log,
+    );
   }
 
   function handleLoadMore() {
@@ -145,16 +96,13 @@ export function NearbyRestaurants() {
     if (restaurants.length % 25 !== 0) setRange((prev) => prev + 10);
   }
 
-  const activeColumns = columns.filter((col) => col.views.includes(view));
+  const activeColumns = TABLE_COLUMNS.filter((col) => col.views.includes(view));
   const rows = restaurants.map((r) => activeColumns.map((col) => col.value(r)));
   const headers = activeColumns.slice(1).map((col) => ({
     key: col.key,
     name: col.header,
     width: col.width,
   }));
-
-  const hasChange =
-    JSON.stringify(selectedFilters) !== JSON.stringify(appliedFilters);
 
   return (
     <>
@@ -165,7 +113,7 @@ export function NearbyRestaurants() {
             radius="lg"
             leftSection={<IconAdjustments size={14} />}
             variant="light"
-            onClick={handleButtonClick}
+            onClick={handleShowFilters}
           >
             {showSelectFiltersCard ? "Hide filters" : "Show filters"}
           </Button>
@@ -173,81 +121,40 @@ export function NearbyRestaurants() {
             {rows.length || "-"} shown · ≤{range} mi
           </Badge>
         </ResponsiveRow>
-        {showSelectFiltersCard ? (
-          <SelectFiltersCard
-            hasChange={hasChange}
-            selectedFilters={selectedFilters}
-            handleFastFoodToggle={handleFastFoodToggle}
-            handleCuisineFilters={handleCuisineFilters}
-            handleApplyFilters={handleApplyFilters}
-          />
-        ) : (
-          <AppliedFiltersList
-            appliedFilters={appliedFilters}
-            onRemoveFilter={onRemoveFilter}
-          />
-        )}
+        <FiltersSection
+          showSelectFiltersCard={showSelectFiltersCard}
+          appliedFilters={appliedFilters}
+          handleNewFilters={handleNewFilters}
+        />
       </Paper>
-      <Paper shadow="md" radius="xl" withBorder p="xs">
-        {location.source === "none" ? (
+      {location.source === "none" ? (
+        <Paper shadow="md" radius="xl" withBorder p="xs">
           <Box w={"100%"}>
             <Flex direction="column" align="center" justify="center" py="xl">
               <IconAlertSquareRounded size={48} style={{ margin: "0 auto" }} />
               <Text size="lg">
                 Location access is required to view nearby restaurants
               </Text>
+              <Space h="md" />
               <Button
-                onClick={() =>
-                  requestLocation(
-                    ({ coords }) =>
-                      handleLocationUpdate({
-                        lat: coords.latitude,
-                        lng: coords.longitude,
-                        source: "gps",
-                      }),
-                    console.log,
-                  )
-                }
+                size="lg"
+                radius="lg"
+                variant="outline"
+                onClick={giveLocationAccess}
               >
                 Give Location
               </Button>
             </Flex>
           </Box>
-        ) : (
-          <>
-            {rows.length > 0 ? (
-              <>
-                <Table headers={headers} rows={rows} />
-                <Space h="md" />
-                <Button
-                  size="lg"
-                  radius="lg"
-                  variant="white"
-                  fullWidth
-                  onClick={handleLoadMore}
-                >
-                  Load more
-                </Button>
-              </>
-            ) : (
-              <Box w={"100%"}>
-                <Flex
-                  direction="column"
-                  align="center"
-                  justify="center"
-                  py="xl"
-                >
-                  <IconAlertSquareRounded
-                    size={48}
-                    style={{ margin: "0 auto" }}
-                  />
-                  <Text size="lg">No restaurants found</Text>
-                </Flex>
-              </Box>
-            )}
-          </>
-        )}
-      </Paper>
+        </Paper>
+      ) : (
+        <RestaurantsSection
+          rows={rows}
+          headers={headers}
+          status={status}
+          handleLoadMore={handleLoadMore}
+        />
+      )}
     </>
   );
 }
