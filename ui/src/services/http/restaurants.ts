@@ -1,5 +1,5 @@
-import { UI_CUISINES } from "../utils/constants";
-import type { Filters, Restaurant } from "../utils/types";
+import { UI_CUISINES } from "../../utils/constants";
+import type { Filters, Restaurant } from "../../utils/types";
 
 export async function getRestaurants(
   lat: number,

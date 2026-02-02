@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { Paper, Button, Flex, Box, Text, Badge, Space } from "@mantine/core";
-import { IconAdjustments, IconAlertSquareRounded } from "@tabler/icons-react";
+import { Paper, Button, Badge } from "@mantine/core";
+import { IconAdjustments } from "@tabler/icons-react";
 
 import { FiltersSection } from "./components/FiltersSection";
+import { LocationAccessSection } from "./components/LocationAccessSection";
 import { RestaurantsSection } from "./components/RestaurantsSection";
 import { ResponsiveRow } from "../../components/ResponsiveRow";
 
-import { requestLocation } from "../../services/locationService";
-import { getRestaurants } from "../../services/restaurantsService";
+import { getRestaurants } from "../../services/http/restaurants";
 
 import { TABLE_COLUMNS } from "../../utils/constants";
 import { useBreakpoints, useUserLocation } from "../../utils/hooks";
@@ -79,18 +79,6 @@ export function NearbyRestaurants() {
     setShowSelectFiltersCard(false);
   }
 
-  function giveLocationAccess() {
-    requestLocation(
-      ({ coords }) =>
-        handleLocationUpdate({
-          lat: coords.latitude,
-          lng: coords.longitude,
-          source: "gps",
-        }),
-      console.log,
-    );
-  }
-
   function handleLoadMore() {
     setPage((prev) => prev + 1);
     if (restaurants.length % 25 !== 0) setRange((prev) => prev + 10);
@@ -128,25 +116,7 @@ export function NearbyRestaurants() {
         />
       </Paper>
       {location.source === "none" ? (
-        <Paper shadow="md" radius="xl" withBorder p="xs">
-          <Box w={"100%"}>
-            <Flex direction="column" align="center" justify="center" py="xl">
-              <IconAlertSquareRounded size={48} style={{ margin: "0 auto" }} />
-              <Text size="lg">
-                Location access is required to view nearby restaurants
-              </Text>
-              <Space h="md" />
-              <Button
-                size="lg"
-                radius="lg"
-                variant="outline"
-                onClick={giveLocationAccess}
-              >
-                Give Location
-              </Button>
-            </Flex>
-          </Box>
-        </Paper>
+        <LocationAccessSection handleLocationUpdate={handleLocationUpdate} />
       ) : (
         <RestaurantsSection
           rows={rows}

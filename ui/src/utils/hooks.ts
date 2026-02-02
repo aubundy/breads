@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import { getLocation } from "../services/locationService";
-import { storage } from "../services/storageService";
+import { getUserLocation, setUserLocation } from "../services/browser/location";
 
 import type { UserLocation } from "./types";
 
@@ -22,11 +21,11 @@ export const useUserLocation: () => {
   location: UserLocation;
   handleLocationUpdate: (location: UserLocation) => void;
 } = () => {
-  const [location, setLocation] = useState<UserLocation>(getLocation());
+  const [location, setLocation] = useState<UserLocation>(getUserLocation());
 
   function handleLocationUpdate(location: UserLocation) {
     setLocation(location);
-    storage.set("userLocation", location);
+    setUserLocation(location);
   }
 
   return { location, handleLocationUpdate };
