@@ -2,7 +2,7 @@ import path, { dirname } from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
-import { findNearby } from "../utils/distance.js";
+import { findNearby } from "../../utils/distance.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,7 +11,7 @@ function getRestaurants({ page, range, lat, lng, filters, excludeFastFood }) {
   return new Promise((resolve, reject) => {
     const outputPath = path.join(
       __dirname,
-      "../osm_data/2-birmingham-osm-restaurants.jsonl",
+      "../../osm_data/2-birmingham-osm-restaurants.jsonl",
     );
 
     let points = [];

@@ -1,7 +1,7 @@
 import express from "express";
 
-// import { crawlTiles } from "./openstreetmap/service.js";
-import restaurantsRouter from "./restaurants/restaurants-routes.js";
+// import { crawlTiles } from "./features/openstreetmap/service.js";
+import restaurantsRouter from "./features/restaurants/restaurants-routes.js";
 
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
