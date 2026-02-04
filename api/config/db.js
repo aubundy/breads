@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-export const connectDB = async () => {
+export const connectDB = async (uri) => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    const conn = await mongoose.connect(uri, {
       autoIndex: process.env.NODE_ENV !== "production",
     });
 

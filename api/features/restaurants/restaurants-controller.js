@@ -19,8 +19,8 @@ export async function handleGetRestaurants(req, res, next) {
 
     const page = parseInt(req.query.page) || 0;
     const range = parseInt(req.query.range) || 10;
-    const lat = parseFloat(req.query.lat) || 33.4093;
-    const lng = parseFloat(req.query.lng) || -86.8321;
+    const lat = parseFloat(req.query.lat);
+    const lng = parseFloat(req.query.lng);
 
     const cuisines = req.query.filterCuisines || "";
     const excludeFastFood = req.query.excludeFastFood === "true";

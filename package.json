@@ -5,14 +5,17 @@
   "type": "module",
   "scripts": {
     "start": "pm2 start app.js",
-    "dev": "pm2 start app.js --watch",
-    "logs": "pm2 logs",
-    "stop": "pm2 stop app.js"
+    "dev": "NODE_ENV=dev node --watch ./api/app.js",
+    "migrate": "NODE_ENV=dev node ./api/config/dbscripts/migrate.js"
   },
   "dependencies": {
+    "cors": "^2.8.6",
+    "csv-parse": "^6.1.0",
     "debug": "~2.6.9",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "http-errors": "~1.6.3",
+    "mongoose": "^9.1.5",
     "morgan": "~1.9.1"
   }
 }
