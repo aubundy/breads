@@ -1,11 +1,12 @@
-import { Title, AppShell, Text } from "@mantine/core";
+import { Title, AppShell } from "@mantine/core";
+// import { Title, AppShell, Text } from "@mantine/core";
 
 import { ResponsiveRow } from "./ResponsiveRow";
 
-import { getUserLocation } from "../services/browser/location";
+// import { getUserLocation } from "../services/browser/location";
 
 export function PageWrapper({ children }: { children: React.ReactNode }) {
-  const { source } = getUserLocation();
+  // const { source } = getUserLocation();
 
   return (
     <AppShell padding="md" header={{ height: 60 }}>
@@ -14,7 +15,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
           <Title style={{ padding: "var(--mantine-spacing-xs)" }} order={1}>
             Breads [beta]
           </Title>
-          {source !== "none" ? (
+          {/* {source !== "none" ? (
             <Text style={{ padding: "var(--mantine-spacing-xs)" }} size="lg">
               Location given ✓
             </Text>
@@ -22,7 +23,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
             <Text style={{ padding: "var(--mantine-spacing-xs)" }} size="lg">
               No location given ✗
             </Text>
-          )}
+          )} */}
         </ResponsiveRow>
       </AppShell.Header>
       <AppShell.Main>{children}</AppShell.Main>
