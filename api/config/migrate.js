@@ -1,10 +1,8 @@
 import mongoose, { Schema, model } from "mongoose";
-import dotenv from "dotenv";
 
 import { connectDB } from "./db.js";
+import { loadEnvVariables } from "./env.js";
 import { migrations } from "./dbscripts/migrations.js";
-
-dotenv.config({ path: `./api/config/.env.${process.env.NODE_ENV}` });
 
 const MigrationSchema = new Schema({
   name: { type: String, required: true, unique: true },
@@ -40,4 +38,5 @@ async function runMigrations() {
   process.exit(0);
 }
 
+loadEnvVariables();
 runMigrations();

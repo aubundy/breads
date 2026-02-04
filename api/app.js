@@ -1,15 +1,13 @@
 import express from "express";
-import dotenv from "dotenv";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
 import { connectDB } from "./config/db.js";
+import { loadEnvVariables } from "./config/env.js";
 
 // import { crawlTiles } from "./features/openstreetmap/service.js";
 import restaurantsRouter from "./features/restaurants/restaurants-routes.js";
 import zipRouter from "./features/zipLocation/zipLocation-routes.js";
-
-dotenv.config({ path: `./api/config/.env.${process.env.NODE_ENV}` });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,6 +29,7 @@ app.use("/", (req, res) => {
 });
 
 const startServer = async () => {
+  loadEnvVariables();
   await connectDB(process.env.MONGODB_URI);
 
   app.listen(port, () => {
