@@ -12,7 +12,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
       <AppShell.Header>
         <ResponsiveRow>
           <Title style={{ padding: "var(--mantine-spacing-xs)" }} order={1}>
-            Breads
+            Breads [beta]
           </Title>
           {source !== "none" ? (
             <Text style={{ padding: "var(--mantine-spacing-xs)" }} size="lg">
