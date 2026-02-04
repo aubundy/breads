@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "pm2 start app.js",
+    "start": "NODE_ENV=production ./api/app.js",
     "dev": "NODE_ENV=dev node --watch ./api/app.js",
     "migrate": "NODE_ENV=dev node ./api/config/dbscripts/migrate.js"
   },
