@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
-const FILE_PATH = "../../data/2-birmingham-osm-restaurants.jsonl";
+const FILE_PATH = "../../data/birmingham-osm-restaurants.jsonl";
 
 export async function crawlTiles() {
   const tiles = generateTiles(bbox2);

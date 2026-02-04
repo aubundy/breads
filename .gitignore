@@ -13,7 +13,6 @@ dist/
 # Logs and cache
 logs
 *.log
-*.jsonl
 npm-debug.log*
 yarn-debug.log*
 .npm
