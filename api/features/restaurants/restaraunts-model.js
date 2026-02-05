@@ -11,7 +11,7 @@ function getRestaurants({ page, range, lat, lng, filters, excludeFastFood }) {
   return new Promise((resolve, reject) => {
     const outputPath = path.join(
       __dirname,
-      "../../data/birmingham-osm-restaurants.jsonl",
+      "../../data/all-osm-restaurants.jsonl",
     );
 
     let points = [];

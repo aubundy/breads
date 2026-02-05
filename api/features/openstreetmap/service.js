@@ -6,22 +6,22 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
-const FILE_PATH = "../../data/birmingham-osm-restaurants.jsonl";
+const FILE_PATH = "../../data/san-fran-osm-restaurants.jsonl";
 
 export async function crawlTiles() {
-  const tiles = generateTiles(bbox2);
+  const tiles = generateTiles(bbox3);
   console.log(tiles.length);
   //   for (let i = 0; i < tiles.length; i++) {
   try {
     // console.log(`Crawling tile ${i} ${tiles[i].tileId}`);
 
-    const data = await getAmenities(bbox2);
+    const data = await getAmenities(bbox3);
     const places = normalizeOverpassResponse(data);
-    await savePlaces(places, 1000);
+    await savePlaces(places, 1001);
 
     console.log(`✓ ${places.length} places`);
   } catch (err) {
-    console.error(`✗ Tile ${1000} failed`, err.message);
+    console.error(`✗ Tile ${1001} failed`, err.message);
   }
 
   // Politeness delay
@@ -132,6 +132,13 @@ const bbox2 = {
   east: -86.35940551757814,
 };
 
+const bbox3 = {
+  south: 37.17891977403989,
+  west: -122.73788452148439,
+  north: 38.043765107439675,
+  east: -121.45935058593751,
+};
+
 const TILE_SIZE = 0.01;
 
 function generateTiles(bbox) {
@@ -158,3 +165,5 @@ function generateTiles(bbox) {
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+crawlTiles();

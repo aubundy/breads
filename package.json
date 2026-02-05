@@ -7,7 +7,8 @@
     "start": "NODE_ENV=production node api/app.js",
     "dev": "NODE_ENV=dev node --watch api/app.js",
     "migrate": "NODE_ENV=dev node api/config/migrate.js",
-    "build:ui": "npm ci --prefix ui && npm run build --prefix ui"
+    "build:ui": "npm ci --prefix ui && npm run build --prefix ui",
+    "genTiles": "node api/features/openstreetmap/service.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
