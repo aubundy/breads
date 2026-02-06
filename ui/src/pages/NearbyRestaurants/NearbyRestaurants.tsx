@@ -97,7 +97,7 @@ export function NearbyRestaurants() {
       <Paper radius="xl" mb="xl">
         <ResponsiveRow>
           <Button
-            size="lg"
+            size="md"
             radius="lg"
             leftSection={<IconAdjustments size={14} />}
             variant="light"
@@ -105,7 +105,7 @@ export function NearbyRestaurants() {
           >
             {showSelectFiltersCard ? "Hide filters" : "Show filters"}
           </Button>
-          <Badge variant="transparent" color="blue" size="xl" radius="md">
+          <Badge variant="transparent" color="blue" size="lg" radius="md">
             {rows.length || "-"} shown · ≤{range} mi
           </Badge>
         </ResponsiveRow>
