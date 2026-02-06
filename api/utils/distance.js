@@ -5,7 +5,6 @@ export function findNearby(points, userLat, userLng, radiusMiles = 5, page) {
 
   const fromIndex = page * 25;
   const limit = fromIndex + 25;
-  console.log(`Returning results from index ${fromIndex} to ${limit}`);
 
   return candidates
     .sort((a, b) => a.distanceMiles - b.distanceMiles)

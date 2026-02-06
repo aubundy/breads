@@ -2,7 +2,6 @@ import service from "./restaurants-service.js";
 
 export async function handleGetRestaurants(req, res, next) {
   try {
-    console.log(req.query.filterCuisines);
     // const amenitites = {
     //   restaurant: 379,
     //   ice_cream: 14,
@@ -26,6 +25,15 @@ export async function handleGetRestaurants(req, res, next) {
     const excludeFastFood = req.query.excludeFastFood === "true";
     const filters = cuisines.split(",");
 
+    console.log("Query: ", {
+      page,
+      range,
+      lat,
+      lng,
+      filters: filters.length,
+      excludeFastFood,
+    });
+
     const restaurants = await service.getRestaurants({
       page,
       range,
@@ -35,7 +43,8 @@ export async function handleGetRestaurants(req, res, next) {
       excludeFastFood,
     });
 
-    console.log(`Controller: Retrieved ${restaurants.length} restaurants`);
+    console.log("Restaurants: ", restaurants.length);
+
     res.status(200).json(restaurants);
   } catch (error) {
     next(error);

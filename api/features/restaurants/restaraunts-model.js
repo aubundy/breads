@@ -48,8 +48,6 @@ function getRestaurants({ page, range, lat, lng, filters, excludeFastFood }) {
         page,
       );
 
-      console.log(`Found ${restaraunts.length} nearby restaurants`);
-
       const amenityCounts = restaraunts.reduce((counts, place) => {
         const amenity = place.amenity || "unknown";
         counts[amenity] = (counts[amenity] || 0) + 1;
