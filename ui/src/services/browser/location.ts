@@ -16,7 +16,20 @@ export function requestLocation(
 }
 
 export function getUserLocation(): UserLocation {
-  return storage.get("userLocation", { lat: 0, lng: 0, source: "none" });
+  const defaultLocation: UserLocation = { lat: 0, lng: 0, source: "none" };
+  const currentLocation = storage.get("userLocation", defaultLocation);
+
+  if (currentLocation.source === "gps") {
+    navigator.geolocation.getCurrentPosition(({ coords }) => {
+      setUserLocation({
+        lat: coords.latitude,
+        lng: coords.longitude,
+        source: "gps",
+      });
+    });
+  }
+
+  return storage.get("userLocation", defaultLocation);
 }
 
 export function setUserLocation(location: UserLocation) {
