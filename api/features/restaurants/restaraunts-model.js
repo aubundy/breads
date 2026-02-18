@@ -1,84 +1,124 @@
-import path, { dirname } from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
+import mongoose from "mongoose";
 
-import { findNearby } from "../../utils/distance.js";
+const placeSchema = new mongoose.Schema(
+  {
+    osmId: { type: String, required: true },
+    osmType: { type: String, required: true },
+    tileId: { type: String },
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+    name: { type: String },
+    normalizedName: { type: String },
 
-function getRestaurants({ page, range, lat, lng, filters, excludeFastFood }) {
-  return new Promise((resolve, reject) => {
-    const outputPath = path.join(
-      __dirname,
-      "../../data/all-osm-restaurants.jsonl",
-    );
+    cuisines: [{ type: String }],
 
-    let points = [];
+    amenity: { type: String },
 
-    const readStream = fs.createReadStream(outputPath, { encoding: "utf-8" });
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+      },
+      coordinates: {
+        type: [Number], // [lng, lat]
+        required: true,
+      },
+    },
+  },
+  { timestamps: true },
+);
 
-    let leftover = "";
+placeSchema.index({ location: "2dsphere" });
+placeSchema.index({ cuisines: 1 });
+placeSchema.index({ amenity: 1 });
 
-    readStream.on("data", (chunk) => {
-      const lines = (leftover + chunk).split("\n");
-      leftover = lines.pop();
+const Place = mongoose.model("Place", placeSchema);
 
-      for (const line of lines) {
-        if (line.trim()) {
-          points.push(JSON.parse(line));
-        }
-      }
-    });
+async function getRestaurants({
+  page = 1,
+  range = 5, // miles
+  lat,
+  lng,
+  filters = [],
+  excludeFastFood = false,
+}) {
+  const limit = 25;
+  const skip = page * limit;
+  const maxDistanceMeters = range * 1609.34;
 
-    readStream.on("end", () => {
-      if (leftover.trim()) {
-        points.push(JSON.parse(leftover));
-      }
+  let matchStage = {};
 
-      const matchesCuisineType = ({ cuisine }) => !filters.includes(cuisine);
-      const isNotFastFood = ({ amenity }) =>
-        excludeFastFood ? amenity !== "fast_food" : true;
+  if (filters.length) {
+    matchStage["cuisines"] = { $nin: filters };
+  }
 
-      const restaraunts = findNearby(
-        points.filter(matchesCuisineType).filter(isNotFastFood),
-        lat,
-        lng,
-        range, // radius miles
-        page,
-      );
+  if (excludeFastFood) {
+    matchStage["amenity"] = { $ne: "fast_food" };
+  }
 
-      const amenityCounts = restaraunts.reduce((counts, place) => {
-        const amenity = place.amenity || "unknown";
-        counts[amenity] = (counts[amenity] || 0) + 1;
-        return counts;
-      }, {});
+  const result = await Place.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+        distanceField: "distance",
+        maxDistance: maxDistanceMeters,
+        spherical: true,
+        query: matchStage,
+      },
+    },
 
-      // console.log("Amenity counts:", amenityCounts);
+    {
+      $facet: {
+        results: [
+          { $skip: skip },
+          { $limit: limit },
+          {
+            $project: {
+              name: 1,
+              cuisines: 1,
+              amenity: 1,
+              distanceMiles: {
+                $round: [{ $divide: ["$distance", 1609.34] }, 2],
+              },
+              location: 1,
+            },
+          },
+        ],
+        totalCount: [{ $count: "count" }],
+        cuisineCount: [
+          { $unwind: "$cuisines" },
+          {
+            $group: {
+              _id: "$cuisines",
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { count: -1 } },
+        ],
+        amenityCount: [
+          {
+            $group: {
+              _id: "$amenity",
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { count: -1 } },
+        ],
+      },
+    },
+  ]);
 
-      const cuisineCounts = restaraunts.reduce((counts, place) => {
-        const cuisine = place.cuisine || "unknown";
+  const data = result[0];
 
-        if (cuisine.includes(";")) {
-          const cuisines = cuisine.split(";");
-          cuisines.forEach((c) => {
-            counts[c.trim()] = (counts[c.trim()] || 0) + 1;
-          });
-          return counts;
-        }
-
-        counts[cuisine] = (counts[cuisine] || 0) + 1;
-        return counts;
-      }, {});
-
-      // console.log("Cuisine counts:", cuisineCounts);
-      resolve(restaraunts);
-    });
-
-    readStream.on("error", (err) => {
-      reject(err);
-    });
-  });
+  return {
+    results: data.results,
+    totalCount: data.totalCount[0]?.count || 0,
+    cuisineCount: data.cuisineCount,
+    amenityCount: data.amenityCount,
+  };
 }
 
 export default { getRestaurants };

@@ -10,7 +10,7 @@ async function getRestaurants({
 }) {
   const mappedFilters = filters.map((f) => (f === "unknown" ? null : f));
 
-  const restaurants = await model.getRestaurants({
+  const data = await model.getRestaurants({
     page,
     range,
     lat,
@@ -18,7 +18,15 @@ async function getRestaurants({
     filters: mappedFilters,
     excludeFastFood,
   });
-  return restaurants;
+
+  console.log({
+    results: data.results.length,
+    total: data.totalCount,
+    cuisineCount: data.cuisineCount.length,
+    amentityCount: data.amenityCount.length,
+  });
+
+  return data.results;
 }
 
 export default { getRestaurants };
