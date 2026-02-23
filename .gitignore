@@ -17,4 +17,5 @@ npm-debug.log*
 yarn-debug.log*
 .npm
 .eslintcache
-/osm_data
+
+data/

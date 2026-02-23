@@ -32,7 +32,7 @@ placeSchema.index({ location: "2dsphere" });
 placeSchema.index({ cuisines: 1 });
 placeSchema.index({ amenity: 1 });
 
-const Place = mongoose.model("Place", placeSchema);
+export const Place = mongoose.model("Place", placeSchema);
 
 async function getRestaurants({
   page = 1,

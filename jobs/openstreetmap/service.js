@@ -1,12 +1,7 @@
-import path, { dirname } from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const OVERPASS_URL = "https://overpass-api.de/api/interpreter";
-const FILE_PATH = "../../data/san-fran-osm-restaurants.jsonl";
+const FILE_PATH = "./data/restaurants.jsonl";
 
 export async function crawlTiles() {
   const tiles = generateTiles(bbox3);
@@ -90,8 +85,7 @@ function normalizeOverpassResponse(data) {
 }
 
 async function savePlaces(places, tileId) {
-  const outputPath = path.join(__dirname, FILE_PATH);
-  const writeStream = fs.createWriteStream(outputPath, { flags: "a" });
+  const writeStream = fs.createWriteStream(FILE_PATH, { flags: "a" });
 
   for (const place of places) {
     writeStream.write(

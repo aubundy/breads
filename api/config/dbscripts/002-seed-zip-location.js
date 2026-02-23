@@ -1,17 +1,13 @@
 import fs from "fs";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
 import { parse } from "csv-parse";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const filePath = "./data/uszips.csv";
 
 export const migration = {
   name: "002-seed-zip-locations",
 
   async up(conn) {
     const collection = conn.collection("ziplocations");
-    const filePath = path.join(__dirname, "../../data/uszips.csv");
 
     let records = [];
 

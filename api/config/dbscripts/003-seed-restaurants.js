@@ -1,23 +1,15 @@
 import fs from "fs";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
 import readline from "readline";
 import { randomUUID } from "crypto";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
 const BATCH_SIZE = 1000;
+const filePath = "./data/restaurants.jsonl";
 
 export const migration = {
   name: "003-seed-restaurants",
 
   async up(conn) {
     const collection = conn.collection("places");
-    const filePath = path.join(
-      __dirname,
-      "../../data/all-osm-restaurants.jsonl",
-    );
 
     console.log("Connected to MongoDB");
 
