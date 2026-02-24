@@ -1,12 +1,15 @@
 import { createQueryPoints } from "./tasks/createQueryPoints.js";
 import { getGooglePlaces } from "./tasks/getGooglePlaces.js";
 import { comparePlaces } from "./tasks/comparePlaces.js";
+import { createFiles } from "./tasks/createFiles.js";
+
 import { loadEnvVariables } from "../../api/config/env.js";
 
 const tasks = {
   create: createQueryPoints,
   fetch: getGooglePlaces,
   compare: comparePlaces,
+  write: createFiles,
 };
 
 async function run(cliTasks, context) {
@@ -14,7 +17,7 @@ async function run(cliTasks, context) {
   let taskNames = cliTasks;
 
   // run all by default
-  if (!taskNames.length) taskNames = ["create", "fetch", "compare"];
+  if (!taskNames.length) taskNames = ["create", "fetch", "compare", "write"];
 
   for (const name of taskNames) {
     console.log(`Running task: ${name}`);
@@ -46,6 +49,7 @@ const initialContext = {
   googlePlaces: [],
   matches: [],
   newPlaces: [],
+  runAgain: [],
   useFile,
 };
 
@@ -53,7 +57,8 @@ run(cliTasks, initialContext)
   .then((context) => {
     console.log({
       matches: context.matches.length,
-      newHits: context.newPlaces.length,
+      newPlaces: context.newPlaces.length,
+      runAgain: context.runAgain.length,
     });
     console.log("Sync places job complete.");
   })

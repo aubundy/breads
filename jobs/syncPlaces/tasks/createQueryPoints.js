@@ -8,7 +8,9 @@ export async function createQueryPoints(context) {
   const { bbox } = context;
 
   const tiles = await createTiles(bbox, 1000);
-  const queryPoints = tilesToGoogleQueryPoints(tiles).slice(0, 5);
+  const expected = tiles.reduce((sum, t) => sum + t.expectedHits, 0);
+  console.log("Expected places: ", expected);
+  const queryPoints = tilesToGoogleQueryPoints(tiles).slice(100, 200);
 
   return { ...context, queryPoints };
 }
@@ -82,7 +84,6 @@ function tilesToGoogleQueryPoints(tiles) {
       latitude,
       longitude,
       radius: Math.floor(radius),
-      expectedHits: tile.expectedHits,
       bbox: { north, south, east, west },
     };
   });

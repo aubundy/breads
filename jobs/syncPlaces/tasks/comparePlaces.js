@@ -5,7 +5,7 @@ import { Place } from "../../../api/features/restaurants/restaraunts-model.js";
 import { connectDB } from "../../../api/config/db.js";
 import { getEnvVariable } from "../../../api/config/env.js";
 
-const filePath = "./data/google-places.json";
+const filePath = "./data/google/google-places.json";
 
 export async function comparePlaces(context) {
   await connectDB(getEnvVariable("MONGODB_URI"));
@@ -23,7 +23,7 @@ export async function comparePlaces(context) {
   let newPlaces = [];
 
   for (const place of googlePlaces) {
-    const { id, displayName, location, tile } = place;
+    const { id, displayName, location, point } = place;
 
     const lng = location.longitude;
     const lat = location.latitude;
@@ -68,16 +68,17 @@ export async function comparePlaces(context) {
     }
 
     const result = {
-      id,
-      name: displayName.text,
-      osmName: bestMatch?.name,
+      googleId: id,
+      googleName: displayName.text,
+      id: bestMatch?.id,
+      name: bestMatch?.name,
       bestScore,
     };
 
     if (hasStrongNameMatch || (bestMatch && bestScore >= 0.5)) {
       matches.push(result);
     } else {
-      newPlaces.push({ ...result, tile });
+      newPlaces.push({ ...result, point });
     }
   }
 

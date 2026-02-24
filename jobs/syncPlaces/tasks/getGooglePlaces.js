@@ -1,7 +1,7 @@
 import fs from "fs";
 import { getEnvVariable } from "../../../api/config/env.js";
 
-const filePath = "./data/google-places.json";
+const filePath = "./data/google/google-places.json";
 
 export async function getGooglePlaces(context) {
   const { queryPoints, useFile } = context;
@@ -27,22 +27,23 @@ export async function getGooglePlaces(context) {
   }
 
   console.log("Places fetched: ", places.size);
-
-  const expected = queryPoints.reduce((sum, p) => sum + p.expectedHits, 0);
-  console.log("Expected places: ", expected);
+  const placesArray = Array.from(places);
 
   if (useFile) {
-    fs.writeFileSync(filePath, JSON.stringify({ places }, null, 2));
+    fs.writeFileSync(
+      filePath,
+      JSON.stringify({ places: placesArray }, null, 2),
+    );
     console.log("Results written to ", filePath);
   }
 
-  // console.log(runAgain);
+  console.log(runAgain);
 
-  return { ...context, googlePlaces: Array.from(places) };
+  return { ...context, googlePlaces: placesArray, runAgain };
 }
 
 async function fetchNearbyPlaces(point) {
-  const { latitude, longitude, radius, expectedHits } = point;
+  const { latitude, longitude, radius } = point;
   const url = new URL("https://places.googleapis.com/v1/places:searchNearby");
 
   const body = {
@@ -64,7 +65,7 @@ async function fetchNearbyPlaces(point) {
 
   const data = await response.json();
 
-  console.log({ results: data?.places?.length || 0, expectedHits });
+  console.log({ results: data?.places?.length || 0 });
 
   await new Promise((r) => setTimeout(r, 2500)); // delay
 
