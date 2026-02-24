@@ -47,6 +47,8 @@ export async function comparePlaces(context) {
     const normalizedGoogle = normalizeName(displayName.text);
 
     for (const osmPlace of nearbyOsmPlaces) {
+      console.log("Comparing: ", osmPlace.osmId);
+
       const normalizedOsm = normalizeName(osmPlace.name);
 
       const similarity = stringSimilarity.compareTwoStrings(
@@ -70,7 +72,7 @@ export async function comparePlaces(context) {
     const result = {
       googleId: id,
       googleName: displayName.text,
-      id: bestMatch?.id,
+      id: bestMatch?.osmId,
       name: bestMatch?.name,
       bestScore,
     };

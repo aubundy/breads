@@ -1,5 +1,4 @@
 import fs from "fs";
-import { ObjectId } from "mongodb";
 
 const filePath = "./data/google/matches.json";
 
@@ -26,7 +25,7 @@ export const migration = {
 
       ops.push({
         updateOne: {
-          filter: { _id: new ObjectId(id), googleMatch: { $exists: false } },
+          filter: { osmId: id, googleMatch: { $exists: false } },
           update: {
             $set: {
               googleMatch: {
