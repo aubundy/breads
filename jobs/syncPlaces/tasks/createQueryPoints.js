@@ -10,7 +10,7 @@ export async function createQueryPoints(context) {
   const tiles = await createTiles(bbox, 1000);
   const expected = tiles.reduce((sum, t) => sum + t.expectedHits, 0);
   console.log("Expected places: ", expected);
-  const queryPoints = tilesToGoogleQueryPoints(tiles).slice(100, 200);
+  const queryPoints = tilesToGoogleQueryPoints(tiles).slice(0, 5); // update as needed
 
   return { ...context, queryPoints };
 }
