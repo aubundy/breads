@@ -3,7 +3,7 @@ import readline from "readline";
 import { randomUUID } from "crypto";
 
 const BATCH_SIZE = 1000;
-const filePath = "./data/restaurants.jsonl";
+const filePath = "./data/osm/restaurants.jsonl";
 
 export const migration = {
   name: "003-seed-restaurants",
