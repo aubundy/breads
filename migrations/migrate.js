@@ -1,7 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 
-import { connectDB } from "./db.js";
-import { loadEnvVariables } from "./env.js";
+import { connectDB } from "../api/config/db.js";
+import { loadEnvVariables } from "../api/config/env.js";
 import { migrations } from "./dbscripts/migrations.js";
 
 const MigrationSchema = new Schema({
