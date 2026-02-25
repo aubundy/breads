@@ -1,6 +1,7 @@
 import { Place } from "../../../api/features/restaurants/restaraunts-model.js";
-import { connectDB } from "../../../api/config/db.js";
-import { getEnvVariable } from "../../../api/config/env.js";
+
+import { connectDB } from "../../../config/db.js";
+import { getEnvVariable } from "../../../config/env.js";
 
 export async function createQueryPoints(context) {
   await connectDB(getEnvVariable("MONGODB_URI"));

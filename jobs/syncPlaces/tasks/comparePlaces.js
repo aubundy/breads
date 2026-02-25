@@ -2,8 +2,9 @@ import fs from "fs";
 import stringSimilarity from "string-similarity";
 
 import { Place } from "../../../api/features/restaurants/restaraunts-model.js";
-import { connectDB } from "../../../api/config/db.js";
-import { getEnvVariable } from "../../../api/config/env.js";
+
+import { connectDB } from "../../../config/db.js";
+import { getEnvVariable } from "../../../config/env.js";
 
 const filePath = "./data/google/google-places.json";
 

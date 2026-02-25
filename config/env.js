@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 export function loadEnvVariables() {
   const environment = process.env.NODE_ENV || "dev";
-  const envPath = `./api/config/.env.${environment}`;
+  const envPath = `./config/.env.${environment}`;
 
   if (environment !== "production" && fs.existsSync(envPath)) {
     dotenv.config({ path: envPath });

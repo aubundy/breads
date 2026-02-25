@@ -2,8 +2,8 @@ import express from "express";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 
-import { connectDB } from "./config/db.js";
-import { loadEnvVariables } from "./config/env.js";
+import { connectDB } from "../config/db.js";
+import { loadEnvVariables } from "../config/env.js";
 
 import restaurantsRouter from "./features/restaurants/restaurants-routes.js";
 import zipRouter from "./features/zipLocation/zipLocation-routes.js";

@@ -3,7 +3,7 @@ import { getGooglePlaces } from "./tasks/getGooglePlaces.js";
 import { comparePlaces } from "./tasks/comparePlaces.js";
 import { createFiles } from "./tasks/createFiles.js";
 
-import { loadEnvVariables } from "../../api/config/env.js";
+import { loadEnvVariables } from "../../config/env.js";
 
 const tasks = {
   create: createQueryPoints,

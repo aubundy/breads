@@ -1,5 +1,6 @@
 import fs from "fs";
-import { getEnvVariable } from "../../../api/config/env.js";
+
+import { getEnvVariable } from "../../../config/env.js";
 
 const filePath = "./data/google/google-places.json";
 
