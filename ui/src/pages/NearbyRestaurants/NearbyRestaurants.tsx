@@ -5,6 +5,7 @@ import { IconAdjustments } from "@tabler/icons-react";
 import { FiltersSection } from "./components/FiltersSection";
 import { LocationAccessSection } from "./components/LocationAccessSection";
 import { RestaurantsSection } from "./components/RestaurantsSection";
+import { DetailsModal } from "./components/DetailsModal";
 import { ResponsiveRow } from "../../components/ResponsiveRow";
 
 import { getRestaurants } from "../../services/http/restaurants";
@@ -30,6 +31,7 @@ export function NearbyRestaurants() {
   const [range, setRange] = useState(10);
   const [showSelectFiltersCard, setShowSelectFiltersCard] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<Filters>(defaultFilters);
+  const [activePlace, setActivePlace] = useState<Restaurant | null>(null);
 
   useEffect(() => {
     const fetchRestaurants = async (
@@ -84,8 +86,24 @@ export function NearbyRestaurants() {
     if (restaurants.length % 25 !== 0) setRange((prev) => prev + 10);
   }
 
+  function handleCellClick(restaurant: Restaurant) {
+    setActivePlace(restaurant);
+  }
+
+  function handleModalClose() {
+    setActivePlace(null);
+  }
+
   const activeColumns = TABLE_COLUMNS.filter((col) => col.views.includes(view));
-  const rows = restaurants.map((r) => activeColumns.map((col) => col.value(r)));
+  const rows = restaurants.map((r) =>
+    activeColumns.map((col) => {
+      if (r.googleMatch) {
+        return col.value(r, () => handleCellClick(r));
+      } else {
+        return col.value(r);
+      }
+    }),
+  );
   const headers = activeColumns.slice(1).map((col) => ({
     key: col.key,
     name: col.header,
@@ -118,12 +136,20 @@ export function NearbyRestaurants() {
       {location.source === "none" ? (
         <LocationAccessSection handleLocationUpdate={handleLocationUpdate} />
       ) : (
-        <RestaurantsSection
-          rows={rows}
-          headers={headers}
-          status={status}
-          handleLoadMore={handleLoadMore}
-        />
+        <>
+          <RestaurantsSection
+            rows={rows}
+            headers={headers}
+            status={status}
+            handleLoadMore={handleLoadMore}
+          />
+          <DetailsModal
+            isOpen={!!activePlace?.name}
+            name={activePlace?.name || ""}
+            placeId={activePlace?.googleMatch?.placeId || ""}
+            handleModalClose={handleModalClose}
+          />
+        </>
       )}
     </>
   );

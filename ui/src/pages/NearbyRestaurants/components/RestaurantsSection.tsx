@@ -3,7 +3,7 @@ import { IconAlertSquareRounded } from "@tabler/icons-react";
 
 import { Table } from "../../../components/Table";
 
-import type { Status } from "../../../utils/types";
+import type { Cell, Status } from "../../../utils/types";
 
 export function RestaurantsSection({
   rows,
@@ -11,7 +11,7 @@ export function RestaurantsSection({
   status,
   handleLoadMore,
 }: {
-  rows: string[][];
+  rows: Cell[][];
   headers: { key: number; name: string; width?: number }[];
   status: Status;
   handleLoadMore: () => void;

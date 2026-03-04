@@ -1,38 +1,48 @@
 import { formatCuisines, formatDistance } from "./formatters";
-import type { Restaurant } from "./types";
+import type { CellAction, Restaurant, TableColumn } from "./types";
 
-export const TABLE_COLUMNS = [
+export const TABLE_COLUMNS: TableColumn[] = [
   {
     key: 0,
     header: "ID",
     views: ["mobile", "tablet", "desktop"],
-    value: (r: Restaurant) => r.id,
+    value: (r: Restaurant) => ({ text: r.id, type: "TEXT" }),
   },
   {
     key: 1,
     header: "Restaurant name",
     views: ["mobile", "tablet", "desktop"],
-    value: (r: Restaurant) => r.name,
+    value: (r: Restaurant, onClick?: CellAction) => ({
+      text: r.name,
+      type: !r.googleMatch ? "TEXT" : "LINK",
+      onClick,
+    }),
   },
   {
     key: 2,
     header: "Amenity",
     views: ["desktop"],
-    value: (r: Restaurant) => r.amenity,
+    value: (r: Restaurant) => ({ text: r.amenity, type: "TEXT" }),
     width: 200,
   },
   {
     key: 3,
     header: "Cuisine",
     views: ["tablet", "desktop"],
-    value: (r: Restaurant) => formatCuisines(r.cuisine),
+    value: (r: Restaurant) => ({
+      text: formatCuisines(r.cuisine),
+      type: "TEXT",
+    }),
     width: 250,
   },
   {
     key: 4,
     header: "Mi",
     views: ["mobile", "tablet", "desktop"],
-    value: (r: Restaurant) => formatDistance(r.distanceMiles),
+    value: (r: Restaurant) => ({
+      text: formatDistance(r.distanceMiles),
+      type: "TEXT",
+    }),
     width: 70,
   },
 ];
