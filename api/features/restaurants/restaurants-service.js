@@ -1,4 +1,5 @@
-import model from "./restaraunts-model.js";
+import { getEnvVariable } from "../../../config/env.js";
+import model from "./restaurants-model.js";
 
 async function getRestaurants({
   page,
@@ -29,4 +30,21 @@ async function getRestaurants({
   return data.results;
 }
 
-export default { getRestaurants };
+async function getRestaurantDetails(placeId) {
+  const url = new URL("https://places.googleapis.com/v1/places/" + placeId);
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": getEnvVariable("GOOGLE_API_KEY"),
+      "X-Goog-FieldMask":
+        "displayName,location,formattedAddress,rating,nationalPhoneNumber",
+    },
+  });
+
+  const data = await response.json();
+  return data;
+}
+
+export default { getRestaurants, getRestaurantDetails };

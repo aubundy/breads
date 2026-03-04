@@ -24,6 +24,12 @@ const placeSchema = new mongoose.Schema(
         required: true,
       },
     },
+
+    googleMatch: {
+      placeId: { type: String },
+      matchScore: { type: Number },
+      matchedAt: { type: Date },
+    },
   },
   { timestamps: true },
 );
@@ -84,6 +90,7 @@ async function getRestaurants({
                 $round: [{ $divide: ["$distance", 1609.34] }, 2],
               },
               location: 1,
+              googleMatch: { $ifNull: ["$googleMatch", null] },
             },
           },
         ],
