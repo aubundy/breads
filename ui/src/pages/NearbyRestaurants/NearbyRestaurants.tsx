@@ -135,7 +135,7 @@ export function NearbyRestaurants({
             {showSelectFiltersCard ? "Hide filters" : "Show filters"}
           </Button>
           <Badge variant="transparent" color="blue" size="lg" radius="md">
-            {rows.length || "-"} shown · ≤{range} mi
+            {rows.length || "-"} hits · ≤{range} mi
           </Badge>
         </ResponsiveRow>
         <FiltersSection
