@@ -1,29 +1,53 @@
-import { Title, AppShell } from "@mantine/core";
-// import { Title, AppShell, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
+
+import { Title, AppShell, Button, Box } from "@mantine/core";
+import { IconCurrentLocation } from "@tabler/icons-react";
 
 import { ResponsiveRow } from "./ResponsiveRow";
 
-// import { getUserLocation } from "../services/browser/location";
+import { getLocation } from "../services/http/location";
 
-export function PageWrapper({ children }: { children: React.ReactNode }) {
-  // const { source } = getUserLocation();
+import type { UserLocation } from "../utils/types";
+
+export function PageWrapper({
+  location,
+  children,
+}: {
+  location: UserLocation;
+  children: React.ReactNode;
+}) {
+  const [locationName, setLocationName] = useState("Loading");
+  console.log(location);
+  useEffect(() => {
+    async function fetchLocation() {
+      const name = await getLocation(location.lat, location.lng);
+      setLocationName(name);
+    }
+
+    const hasCoordinates = location.lat && location.lng;
+
+    if (hasCoordinates) fetchLocation();
+    else setLocationName("Unknown location");
+  }, [location.lat, location.lng, location.source]);
 
   return (
-    <AppShell padding="md" header={{ height: 60 }}>
+    <AppShell padding="md" header={{ height: 64 }}>
       <AppShell.Header>
         <ResponsiveRow>
           <Title style={{ padding: "var(--mantine-spacing-xs)" }} order={1}>
-            Breads [beta]
+            Breads
           </Title>
-          {/* {source !== "none" ? (
-            <Text style={{ padding: "var(--mantine-spacing-xs)" }} size="lg">
-              Location given ✓
-            </Text>
-          ) : (
-            <Text style={{ padding: "var(--mantine-spacing-xs)" }} size="lg">
-              No location given ✗
-            </Text>
-          )} */}
+          <Box p="xs">
+            <Button
+              size="md"
+              radius="lg"
+              rightSection={<IconCurrentLocation size={14} />}
+              variant="light"
+              onClick={console.log}
+            >
+              {locationName}
+            </Button>
+          </Box>
         </ResponsiveRow>
       </AppShell.Header>
       <AppShell.Main>{children}</AppShell.Main>

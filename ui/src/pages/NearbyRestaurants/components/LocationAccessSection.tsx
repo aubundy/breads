@@ -10,7 +10,7 @@ import {
 import { useForm } from "@mantine/form";
 import { IconAlertSquareRounded } from "@tabler/icons-react";
 import { validateZipCode } from "../../../utils/validators";
-import { getCoordinates } from "../../../services/http/coordinates";
+import { getCoordinates } from "../../../services/http/location";
 import {
   getUserAnswer,
   requestLocation,

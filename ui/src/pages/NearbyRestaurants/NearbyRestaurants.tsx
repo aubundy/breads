@@ -11,18 +11,29 @@ import { ResponsiveRow } from "../../components/ResponsiveRow";
 import { getRestaurants } from "../../services/http/restaurants";
 
 import { TABLE_COLUMNS } from "../../utils/constants";
-import { useBreakpoints, useUserLocation } from "../../utils/hooks";
+import { useBreakpoints } from "../../utils/hooks";
 
-import type { UICuisine, Filters, Restaurant, Status } from "../../utils/types";
+import type {
+  UICuisine,
+  Filters,
+  Restaurant,
+  Status,
+  UserLocation,
+} from "../../utils/types";
 
 const defaultFilters: Filters = {
   fastFood: true,
   cuisine: [] as UICuisine[],
 };
 
-export function NearbyRestaurants() {
+export function NearbyRestaurants({
+  location,
+  handleLocationUpdate,
+}: {
+  location: UserLocation;
+  handleLocationUpdate: (l: UserLocation) => void;
+}) {
   const view = useBreakpoints();
-  const { location, handleLocationUpdate } = useUserLocation();
   const defaultStatus = location.source === "none" ? "no-location" : "loading";
 
   const [status, setStatus] = useState<Status>(defaultStatus);
@@ -112,7 +123,7 @@ export function NearbyRestaurants() {
 
   return (
     <>
-      <Paper radius="xl" mb="xl">
+      <Paper radius="xl" mb="md">
         <ResponsiveRow>
           <Button
             size="md"

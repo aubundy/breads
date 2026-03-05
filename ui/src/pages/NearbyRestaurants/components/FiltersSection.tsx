@@ -66,7 +66,7 @@ export function FiltersSection({
   return (
     <>
       {showSelectFiltersCard ? (
-        <Paper shadow="md" radius="xl" withBorder p="xl" mb="xl" mt="xl">
+        <Paper shadow="md" radius="xl" withBorder p="xl" mb="md" mt="md">
           <Switch
             checked={pendingFilters.fastFood}
             label="Show Fast Food options"
