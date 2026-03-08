@@ -1,11 +1,10 @@
 import { API_CUISINES } from "./constants";
 import type { APICuisine } from "./types";
 
-export function formatCuisines(cuisines: string) {
+export function formatCuisines(cuisines: APICuisine[]) {
   if (!cuisines) return "";
 
-  const cuisineList: APICuisine[] = cuisines.split(";") as APICuisine[];
-  return cuisineList.map((c: APICuisine) => API_CUISINES[c]).join(", ");
+  return cuisines.map((c: APICuisine) => API_CUISINES[c]).join(", ");
 }
 
 export function formatDistance(distance: number | null) {

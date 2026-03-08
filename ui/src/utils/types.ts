@@ -1,10 +1,10 @@
-import type { API_CUISINES, UI_CUISINES } from "./constants";
+import type { API_CUISINES, GROUPED_CUISINES } from "./constants";
 
 export interface Restaurant {
   id: string;
   name: string;
   amenity: string;
-  cuisine: string;
+  cuisines: APICuisine[];
   distanceMiles: number | null;
   googleMatch: GoogleMatch | null;
   [key: string]: unknown;
@@ -18,10 +18,10 @@ export interface GoogleMatch {
 
 export interface Filters {
   fastFood: boolean;
-  cuisine: UICuisine[];
+  cuisine: GroupedCuisine[];
 }
 
-export type UICuisine = keyof typeof UI_CUISINES;
+export type GroupedCuisine = keyof typeof GROUPED_CUISINES;
 export type APICuisine = keyof typeof API_CUISINES;
 
 export type UserLocation = {

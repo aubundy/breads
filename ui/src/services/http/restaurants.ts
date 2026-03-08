@@ -1,4 +1,4 @@
-import { UI_CUISINES } from "../../utils/constants";
+import { GROUPED_CUISINES } from "../../utils/constants";
 import type { Details, Filters, Restaurant } from "../../utils/types";
 
 export async function getRestaurants(
@@ -10,7 +10,9 @@ export async function getRestaurants(
 ): Promise<Restaurant[]> {
   try {
     const { cuisine, fastFood } = appliedFilters;
-    const cuisineQuery = `&filterCuisines=${cuisine.map((c) => UI_CUISINES[c]).join(",")}`;
+    const cuisineList = cuisine.flatMap((c) => GROUPED_CUISINES[c]).join(",");
+
+    const cuisineQuery = `&filterCuisines=${cuisineList}`;
     const fastFoodQuery = `&excludeFastFood=${!fastFood}`;
 
     const response = await fetch(

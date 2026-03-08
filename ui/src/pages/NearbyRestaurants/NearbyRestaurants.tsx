@@ -14,7 +14,7 @@ import { TABLE_COLUMNS } from "../../utils/constants";
 import { useBreakpoints } from "../../utils/hooks";
 
 import type {
-  UICuisine,
+  GroupedCuisine,
   Filters,
   Restaurant,
   Status,
@@ -23,7 +23,7 @@ import type {
 
 const defaultFilters: Filters = {
   fastFood: true,
-  cuisine: [] as UICuisine[],
+  cuisine: [] as GroupedCuisine[],
 };
 
 export function NearbyRestaurants({

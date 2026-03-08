@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Button,
   MultiSelect,
@@ -8,13 +9,13 @@ import {
   Switch,
 } from "@mantine/core";
 
-import type { Filters, UICuisine } from "../../../utils/types";
-import { UI_CUISINES } from "../../../utils/constants";
-import { useState } from "react";
+import { GROUPED_CUISINES } from "../../../utils/constants";
+
+import type { Filters, GroupedCuisine } from "../../../utils/types";
 
 const defaultFilters: Filters = {
   fastFood: true,
-  cuisine: [] as UICuisine[],
+  cuisine: [] as GroupedCuisine[],
 };
 
 export function FiltersSection({
@@ -36,7 +37,7 @@ export function FiltersSection({
   function handleCuisineFilters(selected: string[]) {
     setPendingFilters((prev) => ({
       ...prev,
-      cuisine: selected as UICuisine[],
+      cuisine: selected as GroupedCuisine[],
     }));
   }
 
@@ -77,7 +78,7 @@ export function FiltersSection({
           <Space h="md" />
           <MultiSelect
             label="Filter out options"
-            data={Object.keys(UI_CUISINES)}
+            data={Object.keys(GROUPED_CUISINES)}
             defaultValue={pendingFilters.cuisine}
             onChange={handleCuisineFilters}
           />
