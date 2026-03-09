@@ -1,5 +1,5 @@
 import { formatCuisines, formatDistance } from "./formatters";
-import type { CellAction, Restaurant, TableColumn } from "./types";
+import type { APICuisine, CellAction, Restaurant, TableColumn } from "./types";
 
 export const TABLE_COLUMNS: TableColumn[] = [
   {
@@ -12,11 +12,15 @@ export const TABLE_COLUMNS: TableColumn[] = [
     key: 1,
     header: "Restaurant name",
     views: ["mobile", "tablet", "desktop"],
-    value: (r: Restaurant, onClick?: CellAction) => ({
-      text: r.name,
-      type: !r.googleMatch ? "TEXT" : "LINK",
-      onClick,
-    }),
+    value: (r: Restaurant, onClick?: CellAction) => {
+      const c = (r.cuisines[0] as APICuisine) || "unknown";
+
+      return {
+        text: `${CUISINE_EMOJIS[c]} ${r.name}`,
+        type: !r.googleMatch ? "TEXT" : "LINK",
+        onClick,
+      };
+    },
   },
   {
     key: 2,
@@ -144,3 +148,65 @@ export const API_CUISINES = {
   unknown: "Unknown",
   wings: "Wings",
 } as const;
+
+export const CUISINE_EMOJIS: {
+  [key in APICuisine]: string;
+} = {
+  american: "🍔",
+  asian: "🍜",
+  bagel: "🥯",
+  bakery: "🥐",
+  bar_and_grill: "🍻",
+  barbecue: "🍖",
+  breakfast: "🍳",
+  british: "🥧",
+  bubble_tea: "🧋",
+  buffet: "🍽️",
+  burger: "🍔",
+  cajun: "🦐",
+  chicken_fingers: "🍗",
+  chicken_salad: "🥗",
+  chicken: "🍗",
+  chinese: "🥡",
+  coffee_shop: "☕",
+  cookies: "🍪",
+  dessert: "🍰",
+  donut: "🍩",
+  ethiopian: "🍲",
+  european: "🍝",
+  fries: "🍟",
+  frozen_yogurt: "🍦",
+  fusion: "🍽️",
+  greek: "🥙",
+  hot_dog: "🌭",
+  ice_cream: "🍨",
+  indian: "🍛",
+  international: "🌍",
+  italian: "🍝",
+  japanese: "🍣",
+  juice: "🧃",
+  korean: "🍲",
+  latin_american: "🌮",
+  maiz: "🌽",
+  mediterranean: "🫒",
+  mexican: "🌮",
+  middle_eastern: "🧆",
+  pancake: "🥞",
+  pasta: "🍝",
+  pizza: "🍕",
+  ramen: "🍜",
+  regional: "🍽️",
+  salad: "🥗",
+  sandwich: "🥪",
+  seafood: "🦞",
+  smoothie: "🥤",
+  southern: "🍗",
+  steak_house: "🥩",
+  steak: "🥩",
+  sushi: "🍣",
+  tamales: "🫔",
+  "tex-mex": "🌯",
+  thai: "🍜",
+  unknown: "🍽️",
+  wings: "🍗",
+};
