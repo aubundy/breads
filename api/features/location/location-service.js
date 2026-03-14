@@ -12,7 +12,11 @@ export async function getCoordinates(zip) {
 export async function reverseGeocode(lat, lng) {
   const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=geocodejson`;
 
-  const response = await fetch(url);
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "Breads/0.1 (atmb405@gmail.com)",
+    },
+  });
   if (!response.ok) throw new Error(`Nominatim error: ${response.status}`);
 
   const data = await response.json();
