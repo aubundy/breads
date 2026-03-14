@@ -7,6 +7,7 @@ import { loadEnvVariables } from "../config/env.js";
 
 import restaurantsRouter from "./features/restaurants/restaurants-routes.js";
 import locationRouter from "./features/location/location-routes.js";
+import missingPlacesRouter from "./features/missingPlaces/missingPlaces-routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,6 +19,8 @@ app.use(express.static(path.join(__dirname, "../ui/dist")));
 
 app.use("/api", restaurantsRouter);
 app.use("/api", locationRouter);
+app.use("/api", missingPlacesRouter);
+
 app.use("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../ui/dist", "index.html"));
 });
