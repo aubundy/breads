@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Paper, Button, Badge } from "@mantine/core";
 import { IconAdjustments } from "@tabler/icons-react";
 
+import { MissingRestaurantsSection } from "./components/MissingRestaurantsSection";
 import { FiltersSection } from "./components/FiltersSection";
 import { LocationAccessSection } from "./components/LocationAccessSection";
 import { RestaurantsSection } from "./components/RestaurantsSection";
@@ -123,6 +124,7 @@ export function NearbyRestaurants({
 
   return (
     <>
+      <MissingRestaurantsSection location={location} />
       <Paper radius="xl" mb="md">
         <ResponsiveRow>
           <Button
