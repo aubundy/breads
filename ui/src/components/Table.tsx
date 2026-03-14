@@ -57,16 +57,18 @@ function CellType({ text, type, onClick }: Cell) {
         <Button
           style={{ padding: 0 }}
           variant="transparent"
-          size="md"
+          size="compact-md"
           onClick={onClick}
         >
-          {text}
+          <Text style={{ flex: 1, minWidth: 0 }} truncate="end">
+            {text}
+          </Text>
         </Button>
       );
     case "TEXT":
     default:
       return (
-        <Text style={{ flex: 1, minWidth: 0 }} truncate="end">
+        <Text style={{ flex: 1, minWidth: 0 }} mt={3} mb={3} truncate="end">
           {text}
         </Text>
       );
