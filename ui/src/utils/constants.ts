@@ -16,7 +16,7 @@ export const TABLE_COLUMNS: TableColumn[] = [
       const c = (r.cuisines[0] as APICuisine) || "unknown";
 
       return {
-        text: `${API_CUISINES[c].emoji} ${r.name}`,
+        text: `${API_CUISINES[c]?.emoji || "🍽️"} ${r.name}`,
         type: !r.googleMatch ? "TEXT" : "LINK",
         onClick,
       };
